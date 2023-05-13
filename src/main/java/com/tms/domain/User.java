@@ -15,8 +15,8 @@ import java.sql.Date;
 @Data
 @Entity
 @Table(name = "users")
-/*@ToString(exclude = {"subField"})
-@EqualsAndHashCode(exclude = {"subField"})*/
+@ToString(exclude = {"subField"})
+@EqualsAndHashCode(exclude = {"subField"})
 public class User {
 
     @Id
@@ -54,9 +54,6 @@ public class User {
     @Column(name = "countries")
     private String countries;
 
-    @Column(name = "documentation")
-    private String documentation;
-
     @Column(name = "telephone_1")
     private String telephone1;
     @Column(name = "telephone_2")
@@ -72,9 +69,11 @@ public class User {
     @Column(name = "is_deleted")
     private boolean isDeleted;
 
-   /* @JsonManagedReference
+
+    @JsonManagedReference
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "sub_id", referencedColumnName = "id")
-    private Subscription subField;*/
+    private Subscription subField;
+
 
 }
