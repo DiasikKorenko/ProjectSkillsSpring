@@ -1,5 +1,6 @@
 package com.tms.service;
 
+
 import com.tms.domain.User;
 import com.tms.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,9 +23,8 @@ public class UserService {
     }
 
     public User getUserById(int id) {
-        return userRepository.findById(id).orElse(new User()); //+
+        return userRepository.findById(id).orElse(null); //+
     }
-
 
     public User createUser(User user) {
         return userRepository.save(user);
@@ -42,6 +42,10 @@ public class UserService {
 
     public ArrayList<User> getAllUsers() {
         return (ArrayList<User>) userRepository.findAll();
+    }
+
+    public boolean findUserById(int id) {
+        return userRepository.findUserById(id) != null;
     }
 }
 

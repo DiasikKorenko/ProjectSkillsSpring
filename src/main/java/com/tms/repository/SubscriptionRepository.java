@@ -1,14 +1,16 @@
 package com.tms.repository;
 
 import com.tms.domain.Subscription;
+import com.tms.domain.Transport;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.sql.*;
 
 @Repository
-public class SubscriptionRepository {
+public interface SubscriptionRepository extends JpaRepository<Subscription,Integer> {
 
-    private final long ONE_YEAR = 31556926000L;
+
 
    /* public Subscription getSubscriptionById(int id) {
         Subscription subscription = new Subscription();
@@ -26,7 +28,7 @@ public class SubscriptionRepository {
         return subscription;
     }*/
 
-    public boolean createSubscription(int userId) {
+ /*   public boolean createSubscription(int userId) {
         int result = 0;
         try (Connection connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/Blak_projectSkills", "postgres", "root")) {
 
@@ -84,5 +86,5 @@ public class SubscriptionRepository {
             System.out.println(e);
         }
         return result == 1;
-    }
+    }*/
 }

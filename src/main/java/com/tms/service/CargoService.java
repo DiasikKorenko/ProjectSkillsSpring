@@ -1,9 +1,13 @@
 package com.tms.service;
 
 import com.tms.domain.Cargo;
+import com.tms.domain.Transport;
 import com.tms.repository.CargoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -17,10 +21,27 @@ public class CargoService {
     }
 
     public Cargo getCargoById(int id) {
-        return cargoRepository.getCargoById(id);
+        return cargoRepository.findById(id).orElse(null);
     }
 
-    public boolean createCargo(int userId, int weightCargo, int widthCargo, int lenghtCargo, int hight, String states, String route) {
+    public Cargo createCargo(Cargo cargo) {
+        return cargoRepository.save(cargo);
+    }
+
+    public Cargo updateCargo(Cargo cargo) {
+        return cargoRepository.saveAndFlush(cargo);
+    }
+
+    @Transactional
+    public void deleteCargo(int id) {
+        cargoRepository.deleteById(id);
+    }
+
+
+    public ArrayList<Cargo> getAllCargo() {
+        return (ArrayList<Cargo>) cargoRepository.findAll();
+    }
+  /*  public boolean createCargo(int userId, int weightCargo, int widthCargo, int lenghtCargo, int hight, String states, String route) {
         return cargoRepository.createCargo(userId,weightCargo,widthCargo,lenghtCargo,hight,states,route);
     }
 
@@ -39,5 +60,5 @@ public class CargoService {
     public List<Cargo> getAllCargos() {
         return cargoRepository.getAllCargos();
     }
-
+*/
 }

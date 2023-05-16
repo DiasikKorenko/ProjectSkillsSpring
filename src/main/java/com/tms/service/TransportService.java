@@ -5,7 +5,12 @@ import com.tms.domain.User;
 import com.tms.repository.TransportRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.sql.Date;
+import java.util.ArrayList;
 import java.util.List;
+
 @Service
 public class TransportService {
 
@@ -16,9 +21,29 @@ public class TransportService {
         this.transportRepository = transportRepository;
     }
 
-    /*public Transport getTransportById(int id) {
+    public Transport getTransportById(int id) {
+        return transportRepository.findById(id).orElse(null);
+    }
+
+    public Transport createTransport(Transport transport) {
+        return transportRepository.save(transport);
+    }
+
+    public Transport updateTransport(Transport transport) {
+        return transportRepository.saveAndFlush(transport);
+    }
+
+    @Transactional
+    public void deleteTransport(int id) {
+        transportRepository.deleteById(id);
+    }
+
+    public ArrayList<Transport> getAllTransport() {
+        return (ArrayList<Transport>) transportRepository.findAll();
+    }
+   /* public Transport getTransportById(int id) {
         return transportRepository.getTransportById(id);
-    }*/
+    }
 
     public boolean createTransport(Transport transport) {
         return transportRepository.createTransport(transport);
@@ -62,5 +87,6 @@ public class TransportService {
 
     public List<Transport> getAllTransports() {
         return transportRepository.getAllTransports();
+    }*/
     }
-}
+

@@ -1,6 +1,8 @@
 package com.tms.repository;
 
 import com.tms.domain.Cargo;
+import com.tms.domain.Transport;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.sql.*;
@@ -8,9 +10,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Repository
-public class CargoRepository {
+public interface CargoRepository extends JpaRepository<Cargo,Integer> {
 
-    public Cargo getCargoById(int id) {
+
+
+
+  /*  public Cargo getCargoById(int id) {
         Cargo cargo = new Cargo();
         try (Connection connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/Blak_projectSkills", "postgres", "root")) {
             PreparedStatement statement = connection.prepareStatement("SELECT * FROM l_user_cargo WHERE id=?");
@@ -47,7 +52,7 @@ public class CargoRepository {
             statement.setInt(5, hight);
             statement.setString(6, states);
             statement.setString(7, route);
-            /* statement.setDate(16, new Date((new java.util.Date()).getTime())); МОЖНО ДОБАВИТЬ ДАТУ ДОБАВЛЕНИЯ*/
+            statement.setDate(16, new Date((new java.util.Date()).getTime())); МОЖНО ДОБАВИТЬ ДАТУ ДОБАВЛЕНИЯ
             result = statement.executeUpdate();
         } catch (SQLException e) {
             System.out.println("something wrong....");
@@ -68,7 +73,7 @@ public class CargoRepository {
             statement.setString(6, route);
             statement.setInt(7, id);
             statement.setInt(8, userId);
-            /*statement.setDate(13, new Date((new java.util.Date()).getTime())); //TODO: CHANGE DATE*/
+            statement.setDate(13, new Date((new java.util.Date()).getTime())); //TODO: CHANGE DATE
             result = statement.executeUpdate();
         } catch (SQLException e) {
             System.out.println("something wrong....");
@@ -140,5 +145,5 @@ public class CargoRepository {
         }
         return list;
     }
-
+*/
 }

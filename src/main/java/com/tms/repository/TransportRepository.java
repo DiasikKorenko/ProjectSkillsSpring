@@ -1,7 +1,9 @@
 package com.tms.repository;
 
 import com.tms.domain.Transport;
+import com.tms.domain.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -10,9 +12,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Repository
-public class TransportRepository {
+public interface TransportRepository extends JpaRepository<Transport,Integer> {
 
-    public JdbcTemplate template;
+/*    public JdbcTemplate template;
 
     @Autowired
     public TransportRepository(JdbcTemplate template) {
@@ -21,12 +23,12 @@ public class TransportRepository {
 
 
 
-  /*  public Transport getTransportById(int id) {
-        return template.queryForObject("SELECT * FROM l_user_transport WHERE id=?", new TransportMapper(), id);                                     //+
-    }*/
+    public Transport getTransportById(int id) {
+        return template.queryForObject("SELECT * FROM l_user_transport WHERE id=?", new TransportMapper(), id);
+    }
 
     public boolean createTransport(Transport transport) {
-         int result = template.update("INSERT INTO l_user_transport (id,id_user,type_transport,weight_transport,volume_transport)" +   /* добавить в бд(+запрос) new Date((new java.util.Date()).getTime())); МОЖНО ДОБАВИТЬ ДАТУ ДОБАВЛЕНИЯ*/
+         int result = template.update("INSERT INTO l_user_transport (id,id_user,type_transport,weight_transport,volume_transport)" +   // добавить в бд(+запрос) new Date((new java.util.Date()).getTime())); МОЖНО ДОБАВИТЬ ДАТУ ДОБАВЛЕНИЯ
                     "VALUES (DEFAULT,?, ?, ?,?)",new Object[]{transport.getUserId(),transport.getTypeTransport(),transport.getWeightTransport(),transport.getVolumeTransport()});
         return result == 1;
     }
@@ -51,7 +53,7 @@ public class TransportRepository {
             statement.setInt(3, volumeTransport);
             statement.setInt(4, id);
             statement.setInt(5, userId);
-            /*statement.setDate(13, new Date((new java.util.Date()).getTime())); //TODO: CHANGE DATE*/
+            //statement.setDate(13, new Date((new java.util.Date()).getTime())); //TODO: CHANGE DATE
             result = statement.executeUpdate();
         } catch (SQLException e) {
             System.out.println("something wrong....");
@@ -119,5 +121,7 @@ public class TransportRepository {
             System.out.println("something wrong....");
         }
         return list;
-    }
+    }*/
+
+
 }
