@@ -14,4 +14,15 @@ import java.util.List;
 @Repository
 public interface TransportRepository extends JpaRepository<Transport,Integer> {
     List<Transport> findAllByUserId(int id);
+
+
+
+
+
+
+
+
+
+
+    Transport findTransportById(Integer id);
 }
