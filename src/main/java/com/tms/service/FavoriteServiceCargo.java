@@ -44,26 +44,22 @@ public class FavoriteServiceCargo {
     public ArrayList<FavoritesCargo> findAllByUserId(int id) {
         return favoriteRepositoryCargo.findByUserId(id);
     }
-    @Transactional
+/*    @Transactional
     public boolean deleteById(int id) {
         FavoritesCargo ftDBEntity = favoriteRepositoryCargo.findById(id).orElse(null);
         if (ftDBEntity == null)
             return false;
         favoriteRepositoryCargo.deleteById(id);
         return true;
+    }*/
+
+    @Transactional
+    public void deleteFavoriteCargo(int id) {
+        favoriteRepositoryCargo.deleteById(id);
     }
 
     public FavoritesCargo getCargoById(int id) {
         return favoriteRepositoryCargo.findById(id).orElse(null);
-    }
-
-    public boolean deleteCurrentUserCargo(Integer cargoId, Integer userId) {
-        FavoritesCargo fcDBEntity = favoriteRepositoryCargo.findById(cargoId).orElse(null);
-        if (fcDBEntity == null)
-            return false;
-        favoriteRepositoryCargo.deleteById(cargoId);
-        favoriteRepositoryCargo.flush();
-        return true;
     }
 
     public boolean addCurrentUserCargo(int userId, int cargoId) {

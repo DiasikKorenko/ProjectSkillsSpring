@@ -121,9 +121,9 @@ public class SubscriptionController {
     })
     @PostMapping("/currentUser")
     public ResponseEntity<?> createCurrentUserSubscription() {
-        Subscription subscription = subscriptionService.createCurrentUserSubscription(userService.getCurrentUser().getId());
-        if (subscription == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        boolean subscription = subscriptionService.createCurrentUserSubscription(userService.getCurrentUser().getId());
+        if (subscription == false) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(" подписка уже  СУЩЕТСВУЕТ:");
         } else {
             return new ResponseEntity<>(HttpStatus.OK);
         }

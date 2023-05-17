@@ -50,30 +50,9 @@ public class FavoriteController {
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
                     .body("ID НЕ СУЩЕТСВУЕТ:");
-        }else {
+        } else {
             return new ResponseEntity<>(HttpStatus.OK);
         }
-    }
-
-    @Operation(summary = "Удаление транспорта из избранного по id")
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Все супер,транспорт удален из избранного!"), @ApiResponse(responseCode = "400", description = "Не получилось удалить транспорт..."), @ApiResponse(responseCode = "500", description = "Ошибка на сервере.")})
-    @DeleteMapping("/transport/{id}")
-    public ResponseEntity<HttpStatus> deleteTransport(@PathVariable int id) {
-        FavoritesTransport favoritesTransport = favoriteServiceTransport.getTransportById(id);
-        if (favoritesTransport == null) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } else {
-            favoriteServiceTransport.deleteById(id);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
-    }
-
-    @Operation(summary = "Просмотр всех транспортов в избранном")
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Все супер,вот транспорт!"), @ApiResponse(responseCode = "400", description = "Не получилось найти все транспорты..."), @ApiResponse(responseCode = "500", description = "Ошибка на сервере.")})
-    @GetMapping("/transport")
-    public ResponseEntity<ArrayList<FavoritesTransport>> getAllTransport(int userId) {
-        ArrayList<FavoritesTransport> list = favoriteServiceTransport.findAllByUserId(userId);
-        return new ResponseEntity<>(list, (!list.isEmpty()) ? HttpStatus.OK : HttpStatus.NOT_FOUND);
     }
 
     @Operation(summary = "Добавление груза в избранное")
@@ -90,17 +69,38 @@ public class FavoriteController {
         }
     }
 
+    @Operation(summary = "Удаление транспорта из избранного по id")
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Все супер,транспорт удален из избранного!"), @ApiResponse(responseCode = "400", description = "Не получилось удалить транспорт..."), @ApiResponse(responseCode = "500", description = "Ошибка на сервере.")})
+    @DeleteMapping("/transport/{id}")
+    public ResponseEntity<HttpStatus> deleteTransport(@PathVariable int id) {
+        FavoritesTransport favoritesTransport = favoriteServiceTransport.getTransportById(id);
+        if (favoritesTransport == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } else {
+            favoriteServiceTransport.deleteFavoriteTransport(id);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+    }
+
     @Operation(summary = "Удаление груза из избранного по id")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Все супер,транспорт удален из избранного!"), @ApiResponse(responseCode = "400", description = "Не получилось удалить транспорт..."), @ApiResponse(responseCode = "500", description = "Ошибка на сервере.")})
     @DeleteMapping("/cargo/{id}")
-    public ResponseEntity<HttpStatus> deleteCargoById(@PathVariable int id) {
+    public ResponseEntity<HttpStatus> deleteCargo(@PathVariable int id) {
         FavoritesCargo favoritesCargo = favoriteServiceCargo.getCargoById(id);
         if (favoritesCargo == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } else {
-            favoriteServiceCargo.deleteById(id);
+            favoriteServiceCargo.deleteFavoriteCargo(id);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
+    }
+
+    @Operation(summary = "Просмотр всех транспортов в избранном")
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Все супер,вот транспорт!"), @ApiResponse(responseCode = "400", description = "Не получилось найти все транспорты..."), @ApiResponse(responseCode = "500", description = "Ошибка на сервере.")})
+    @GetMapping("/transport")
+    public ResponseEntity<ArrayList<FavoritesTransport>> getAllTransport(int userId) {
+        ArrayList<FavoritesTransport> list = favoriteServiceTransport.findAllByUserId(userId);
+        return new ResponseEntity<>(list, (!list.isEmpty()) ? HttpStatus.OK : HttpStatus.NOT_FOUND);
     }
 
     @Operation(summary = "Просмотр всех грузов в избранном")
@@ -124,27 +124,6 @@ public class FavoriteController {
         }
     }
 
-    @Operation(summary = "Удаление транспорта из избранного по id, авторизованным пользователем")
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Все супер,транспорт удален из избранного!"), @ApiResponse(responseCode = "400", description = "Не получилось удалить транспорт..."), @ApiResponse(responseCode = "500", description = "Ошибка на сервере.")})
-    @DeleteMapping("/transport/currentUser/{id}")
-    public ResponseEntity<HttpStatus> deleteCurrentUserTransport(@PathVariable int id) {
-        boolean favoritesTransport = favoriteServiceTransport.deleteCurrentUserTransport(userService.getCurrentUser().getId(), id);
-        if (favoritesTransport) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } else {
-            favoriteServiceTransport.deleteById(id);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
-    }
-
-    @Operation(summary = "Просмотр всех транспортов в избранном,авторизированным пользователем")
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Все супер,вот транспорт!"), @ApiResponse(responseCode = "400", description = "Не получилось найти все транспорты..."), @ApiResponse(responseCode = "500", description = "Ошибка на сервере.")})
-    @GetMapping("/transport/currentUser")
-    public ResponseEntity<ArrayList<FavoritesTransport>> getCurrentUserAllTransport() {
-        ArrayList<FavoritesTransport> list = favoriteServiceTransport.findAllByUserId(userService.getCurrentUser().getId());
-        return new ResponseEntity<>(list, (!list.isEmpty()) ? HttpStatus.OK : HttpStatus.NOT_FOUND);
-    }
-
     @Operation(summary = "Добавление груза в избранное,авторизированным пользователем")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Все супер!"), @ApiResponse(responseCode = "400", description = "Не получилось достать по id..."), @ApiResponse(responseCode = "500", description = "Ошибка на сервере.")})
     @PostMapping("/cargo/currentUser")
@@ -157,17 +136,12 @@ public class FavoriteController {
         }
     }
 
-    @Operation(summary = "Удаление груза из избранного по id, авторизованным пользователем")
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Все супер,груз удален из избранного!"), @ApiResponse(responseCode = "400", description = "Не получилось удалить транспорт..."), @ApiResponse(responseCode = "500", description = "Ошибка на сервере.")})
-    @DeleteMapping("/cargo/currentUser/{id}")
-    public ResponseEntity<HttpStatus> deleteCurrentUserCargo(@PathVariable int id) {
-        boolean favoriteCargo = favoriteServiceCargo.deleteCurrentUserCargo(userService.getCurrentUser().getId(), id);
-        if (favoriteCargo) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        } else {
-            favoriteServiceTransport.deleteById(id);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
+    @Operation(summary = "Просмотр всех транспортов в избранном,авторизированным пользователем")
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Все супер,вот транспорт!"), @ApiResponse(responseCode = "400", description = "Не получилось найти все транспорты..."), @ApiResponse(responseCode = "500", description = "Ошибка на сервере.")})
+    @GetMapping("/transport/currentUser")
+    public ResponseEntity<ArrayList<FavoritesTransport>> getCurrentUserAllTransport() {
+        ArrayList<FavoritesTransport> list = favoriteServiceTransport.findAllByUserId(userService.getCurrentUser().getId());
+        return new ResponseEntity<>(list, (!list.isEmpty()) ? HttpStatus.OK : HttpStatus.NOT_FOUND);
     }
 
     @Operation(summary = "Просмотр всех грузов в избранном,авторизованным пользователем ")

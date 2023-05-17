@@ -23,7 +23,7 @@ public class SubscriptionService {
     UserService userService;
 
     @Autowired
-    public SubscriptionService(SubscriptionRepository subscriptionRepository, UserRepository userRepository,UserService userService) {
+    public SubscriptionService(SubscriptionRepository subscriptionRepository, UserRepository userRepository, UserService userService) {
         this.subscriptionRepository = subscriptionRepository;
         this.userRepository = userRepository;
     }
@@ -59,15 +59,20 @@ public class SubscriptionService {
         return subscriptionRepository.findByUserId(userId).orElse(null);
     }
 
-    public Subscription createCurrentUserSubscription(int userId) {
-        Subscription subscription = new Subscription();
-        if (userRepository.findUserById(userId) != null) {
-            subscription.setUserId(userId);
-            subscription.setExpireDate(new Date((new java.util.Date()).getTime() + ONE_YEAR));
-            return subscriptionRepository.saveAndFlush(subscription);
-        } else
-            return null;
-    }
+    public boolean createCurrentUserSubscription(int userId) {
+        Subscription userSubDBEntity = subscriptionRepository.findById(userId).orElse(null);
+        if (userSubDBEntity.getId() == userService.getCurrentUser().getId()) {
+            return false;
+        } else {
+            Subscription subscription = new Subscription();
+                subscription.setUserId(userId);
+                subscription.setExpireDate(new Date((new java.util.Date()).getTime() + ONE_YEAR));
+                subscriptionRepository.saveAndFlush(subscription);
+                return true;
+            }
+        }
+
+
 
     @Transactional
     public boolean deleteCurrentUserSubscription(Integer id, Integer userId) {
@@ -79,5 +84,6 @@ public class SubscriptionService {
         subscriptionRepository.flush();
         return true;
     }
-
 }
+
+

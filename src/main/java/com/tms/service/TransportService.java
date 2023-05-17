@@ -108,20 +108,5 @@ public class TransportService {
         transport.setUserId(userId);
         transportRepository.saveAndFlush(transport);
     }
-
-
-
-
-
-
-
-
-
-
-
-    public boolean idExist(Integer id) {
-        boolean b = transportRepository.findTransportById(id) != null ? true : false;
-        return b;
-    }
 }
 

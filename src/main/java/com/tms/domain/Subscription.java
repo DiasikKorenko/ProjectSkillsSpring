@@ -25,7 +25,7 @@ import java.sql.Date;
         @SequenceGenerator(name="sub_id_seq_gen", sequenceName = "subscription_id_seq", allocationSize = 1)
         private int id;
 
-        @Column(name = "expire_date")
+        @Column(name = "expare_date")
         private Date expireDate;
 
         @Column(name = "user_id")

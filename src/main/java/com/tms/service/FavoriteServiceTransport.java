@@ -33,7 +33,7 @@ public class FavoriteServiceTransport {
     public boolean addTransport(int userId, int transportId) {
         Transport ftDBEntity = transportRepository.findById(transportId).orElse(null);
         User userDBEntity = userRepository.findById(userId).orElse(null);
-        if (ftDBEntity == null || userDBEntity==null )
+        if (ftDBEntity == null || userDBEntity == null)
             return false;
         FavoritesTransport btf = new FavoritesTransport();
         btf.setUserId(userId);
@@ -42,13 +42,18 @@ public class FavoriteServiceTransport {
         return true;
     }
 
-    @Transactional
+/*    @Transactional
     public boolean deleteById(int id) {
         FavoritesTransport ftDBEntity = favoriteRepositoryTransport.findById(id).orElse(null);
         if (ftDBEntity == null)
             return false;
         favoriteRepositoryTransport.deleteById(id);
         return true;
+    }*/
+
+    @Transactional
+    public void deleteFavoriteTransport(int id) {
+        favoriteRepositoryTransport.deleteById(id);
     }
 
     public ArrayList<FavoritesTransport> findAllByUserId(int id) {
@@ -57,16 +62,6 @@ public class FavoriteServiceTransport {
 
     public FavoritesTransport getTransportById(int id) {
         return favoriteRepositoryTransport.findById(id).orElse(null);
-    }
-
-
-    public boolean deleteCurrentUserTransport(Integer transportId, Integer userId) {
-        FavoritesTransport ftDBEntity = favoriteRepositoryTransport.findById(transportId).orElse(null);
-        if (ftDBEntity == null || ftDBEntity.getUserId() != userId)
-            return false;
-        favoriteRepositoryTransport.deleteById(transportId);
-        favoriteRepositoryTransport.flush();
-        return true;
     }
 
     public boolean addCurrentTransport(int userId, int transportId) {
