@@ -3,6 +3,7 @@ package com.tms.domain;
 import lombok.Data;
 
 import javax.persistence.*;
+import javax.validation.constraints.Pattern;
 import java.sql.Date;
 
 @Data
@@ -17,25 +18,17 @@ public class Transport {
     @Column(name = "type_transport")
     private String typeTransport;
 
+    @Pattern(regexp = "^([0-9]+(?:[\\.][0-9]*)?|\\.[0-9]+)$",
+            message = "Не соответствие формату weightTransport ")
     @Column(name = "weight_transport")
     private int weightTransport;
 
+    @Pattern(regexp = "^([0-9]+(?:[\\.][0-9]*)?|\\.[0-9]+)$",
+            message = "Не соответствие формату volumeTransport ")
     @Column(name = "volume_transport")
     private int volumeTransport;
-
-    @Column(name = "is_deleted")
-    private boolean isDeleted;
 
     @Column(name = "id_user")
     private int userId;
 
-   /* @Override
-    public String toString() {
-        return "Transport{" +
-                "id=" + id +
-                ", typeTransport='" + typeTransport + '\'' +
-                ", weightTransport=" + weightTransport +
-                ", volumeTransport=" + volumeTransport +
-                               '}';
-    }*/
 }

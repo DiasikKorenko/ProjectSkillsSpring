@@ -18,6 +18,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,9 +41,13 @@ public class TransportController {
             @ApiResponse(responseCode = "400", description = "Не получилось достать по id..."),
             @ApiResponse(responseCode = "500", description = "Ошибка на сервере.")
     })
-   @GetMapping("/{id}")
-    public Transport getTransportById(@Parameter(description = "Эта та самая id которую нужно передать")@PathVariable int id) {
-        return transportService.getTransportById(id);
+    @GetMapping("/{id}")
+    public ResponseEntity<Transport> getTransportById(@Parameter(description = "Эта та самая id которую нужно передать") @PathVariable int id) {
+        Transport transport = transportService.getTransportById(id);
+        if (transport == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(transport, HttpStatus.OK);
 
     }
 
@@ -54,10 +59,13 @@ public class TransportController {
             @ApiResponse(responseCode = "500", description = "Ошибка на сервере.")
     })
     @PostMapping
-    public ResponseEntity<HttpStatus> createTransport(@RequestBody Transport transport, BindingResult bindingResult) {
+    public ResponseEntity<?> createTransport(@RequestBody @Valid Transport transport, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             for (ObjectError o : bindingResult.getAllErrors()) {
                 log.warn("We have bindingResult error : " + o);
+                return ResponseEntity
+                        .status(HttpStatus.BAD_REQUEST)
+                        .body("ВАЛИДНОСТЬ ДАННЫХ:  " + o);
             }
         }
         transportService.createTransport(transport);
@@ -72,8 +80,17 @@ public class TransportController {
             @ApiResponse(responseCode = "500", description = "Ошибка на сервере.")
     })
     @PutMapping
-    public void updateTransport(@RequestBody Transport transport) {
+    public ResponseEntity<?> updateTransport(@RequestBody @Valid Transport transport, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            for (ObjectError o : bindingResult.getAllErrors()) {
+                log.warn("We have bindingResult error : " + o);
+                return ResponseEntity
+                        .status(HttpStatus.BAD_REQUEST)
+                        .body("ВАЛИДНОСТЬ ДАННЫХ:  " + o);
+            }
+        }
         transportService.updateTransport(transport);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @Operation(summary = "Удаление транспорта")
@@ -83,9 +100,14 @@ public class TransportController {
             @ApiResponse(responseCode = "500", description = "Ошибка на сервере.")
     })
     @DeleteMapping("/{id}")
-    public ResponseEntity<HttpStatus> deleteTransport(@PathVariable int id) {
-        transportService.deleteTransport(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    public ResponseEntity<?> deleteTransport(@PathVariable int id) {
+        Transport transport = transportService.getTransportById(id);
+        if (transport == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } else {
+            transportService.deleteTransport(id);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
     }
 
     @Operation(summary = "Просмотр всех транспортов")

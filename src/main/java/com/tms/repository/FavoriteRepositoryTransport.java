@@ -107,20 +107,12 @@ import com.tms.domain.FavoritesTransport;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Repository
 public interface FavoriteRepositoryTransport extends JpaRepository<FavoritesTransport,Integer> {
-
-   /* void deleteByUserIdAndCargoId(String userId, String cargoId);
-
-    void deleteByUserIdAndTrans    List<FavoritesTransport> findByUserIdAndCargoId(String userId, String cargoId);
-    portId(String userId, String transportId);
-
-*/
-    /*List<FavoritesTransport> findByUserIdAndTransportId(String userId, String transportId);*/
-
-    List<FavoritesTransport> findByUserId(int userId);
+    ArrayList<FavoritesTransport> findByUserId(int userId);
 
 }
 

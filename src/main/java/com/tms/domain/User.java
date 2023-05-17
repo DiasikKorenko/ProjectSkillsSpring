@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
+import javax.validation.constraints.Pattern;
 import java.sql.Date;
 
 
@@ -54,6 +55,8 @@ public class User {
     @Column(name = "countries")
     private String countries;
 
+    @Pattern(regexp = "^(\\+)?((\\d{2,3}) ?\\d|\\d)(([ -]?\\d)|( ?(\\d{2,3}) ?)){5,12}\\d$",
+            message = "Не соответствие формату номера телефона")
     @Column(name = "telephone_1")
     private String telephone1;
     @Column(name = "telephone_2")

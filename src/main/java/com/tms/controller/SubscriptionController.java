@@ -85,8 +85,13 @@ public class SubscriptionController {
     })
     @DeleteMapping("/{id}")
     public ResponseEntity<HttpStatus> deleteTransport(@PathVariable int id) {
-        subscriptionService.deleteSubscription(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        Subscription subscription = subscriptionService.getSubscriptionById(id);
+        if (subscription == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } else {
+            subscriptionService.deleteSubscription(id);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
     }
 
 }

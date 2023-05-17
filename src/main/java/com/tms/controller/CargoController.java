@@ -19,6 +19,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,10 +58,13 @@ public class CargoController {
             @ApiResponse(responseCode = "500", description = "Ошибка на сервере.")
     })
     @PostMapping
-    public ResponseEntity<HttpStatus> createCargo(@RequestBody Cargo cargo, BindingResult bindingResult) {
+    public ResponseEntity<?> createCargo(@RequestBody @Valid Cargo cargo, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             for (ObjectError o : bindingResult.getAllErrors()) {
                 log.warn("We have bindingResult error : " + o);
+                return ResponseEntity
+                        .status(HttpStatus.BAD_REQUEST)
+                        .body("ВАЛИДНОСТЬ ДАННЫХ:  " + o);
             }
         }
         cargoService.createCargo(cargo);
@@ -75,8 +79,17 @@ public class CargoController {
             @ApiResponse(responseCode = "500", description = "Ошибка на сервере.")
     })
     @PutMapping
-    public void updateTransport(@RequestBody Cargo cargo) {
+    public ResponseEntity<?> updateTransport(@RequestBody @Valid Cargo cargo,  BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            for (ObjectError o : bindingResult.getAllErrors()) {
+                log.warn("We have bindingResult error : " + o);
+                return ResponseEntity
+                        .status(HttpStatus.BAD_REQUEST)
+                        .body("ВАЛИДНОСТЬ ДАННЫХ:  " + o);
+            }
+        }
         cargoService.updateCargo(cargo);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @Operation(summary = "Удаление груза")
@@ -87,8 +100,13 @@ public class CargoController {
     })
     @DeleteMapping("/{id}")
     public ResponseEntity<HttpStatus> deleteCargo(@PathVariable int id) {
-        cargoService.deleteCargo(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        Cargo cargo = cargoService.getCargoById(id);
+        if (cargo == null){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }else {
+            cargoService.deleteCargo(id);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
     }
 
     @Operation(summary = "Просмотр всех грузов")

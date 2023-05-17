@@ -1,6 +1,7 @@
 package com.tms.service;
 
 import com.tms.domain.FavoritesTransport;
+import com.tms.domain.Transport;
 import com.tms.repository.CargoRepository;
 import com.tms.repository.FavoriteRepositoryTransport;
 import com.tms.repository.TransportRepository;
@@ -39,8 +40,13 @@ public class FavoriteServiceTransport {
         favoriteRepositoryTransport.deleteById(id);
     }
 
-    public List<FavoritesTransport> findAllByUserId(int id) {
+    public ArrayList<FavoritesTransport> findAllByUserId(int id) {
         return favoriteRepositoryTransport.findByUserId(id);
     }
+
+    public FavoritesTransport getTransportById(int id) {
+        return favoriteRepositoryTransport.findById(id).orElse(null);
+    }
+
 }
 

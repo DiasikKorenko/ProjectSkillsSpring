@@ -1,9 +1,7 @@
 package com.tms.controller;
 
-import com.tms.domain.Cargo;
-import com.tms.domain.FavoritesCargo;
-import com.tms.domain.FavoritesTransport;
-import com.tms.domain.User;
+import com.tms.domain.*;
+import com.tms.repository.FavoriteRepositoryTransport;
 import com.tms.service.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -23,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@Component
+@RestController
 @RequestMapping("/favorite")
 public class FavoriteController {
 
@@ -47,15 +45,10 @@ public class FavoriteController {
     }
 
     @Operation(summary = "Добавление транспорта в избранное")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Все супер!"),
-            @ApiResponse(responseCode = "400", description = "Не получилось достать по id..."),
-            @ApiResponse(responseCode = "500", description = "Ошибка на сервере.")
-    })
-    @PostMapping
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Все супер!"), @ApiResponse(responseCode = "400", description = "Не получилось достать по id..."), @ApiResponse(responseCode = "500", description = "Ошибка на сервере.")})
+    @PostMapping("/addTransport")
     public ResponseEntity<HttpStatus> addTransport(int userId, int transportId) {
-
-        FavoritesTransport ft = favoriteServiceTransport.addTransport(userId,transportId);
+        FavoritesTransport ft = favoriteServiceTransport.addTransport(userId, transportId);
         if (ft == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } else {
@@ -63,66 +56,57 @@ public class FavoriteController {
         }
     }
 
-    @Operation(summary = "Удаление из избранного по id")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Все супер,транспорт удален из избранного!"),
-            @ApiResponse(responseCode = "400", description = "Не получилось удалить транспорт..."),
-            @ApiResponse(responseCode = "500", description = "Ошибка на сервере.")
-    })
-    @DeleteMapping("/{id}")
+    @Operation(summary = "Удаление транспорта из избранного по id")
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Все супер,транспорт удален из избранного!"), @ApiResponse(responseCode = "400", description = "Не получилось удалить транспорт..."), @ApiResponse(responseCode = "500", description = "Ошибка на сервере.")})
+    @DeleteMapping("/transport/{id}")
     public ResponseEntity<HttpStatus> deleteTransport(@PathVariable int id) {
-        favoriteServiceTransport.deleteById(id);
-
+        FavoritesTransport favoritesTransport = favoriteServiceTransport.getTransportById(id);
+        if (favoritesTransport == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } else {
+            favoriteServiceTransport.deleteById(id);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
+    }
 
-    @GetMapping
-    public ResponseEntity<FavoritesTransport> findAllByUserId(int userId) {
-        List<FavoritesTransport> list = favoriteServiceTransport.findAllByUserId(userId);
+    @Operation(summary = "Просмотр всех транспортов в избранном")
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Все супер,вот транспорт!"), @ApiResponse(responseCode = "400", description = "Не получилось найти все транспорты..."), @ApiResponse(responseCode = "500", description = "Ошибка на сервере.")})
+    @GetMapping("/transport")
+    public ResponseEntity<ArrayList<FavoritesTransport>> getAllTransport(int userId) {
+        ArrayList<FavoritesTransport> list = favoriteServiceTransport.findAllByUserId(userId);
         return new ResponseEntity<>(list, (!list.isEmpty()) ? HttpStatus.OK : HttpStatus.NOT_FOUND);
     }
+
+    @Operation(summary = "Добавление груза в избранное")
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Все супер!"), @ApiResponse(responseCode = "400", description = "Не получилось достать по id..."), @ApiResponse(responseCode = "500", description = "Ошибка на сервере.")})
+    @PostMapping("/addCargo")
+    public ResponseEntity<HttpStatus> addCargo(int userId, int cargoId) {
+        FavoritesCargo ft = favoriteServiceCargo.addCargo(userId, cargoId);
+        if (ft == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } else {
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
     }
 
-
-
-
-
-
-
-   /* @GetMapping("/transport/alltransport")
-    public String FavTransport(@RequestParam("id") int id, Model model) {
-        favoriteServiceTransport.addTransport(userService.getCurrentUser().getId(), id);
-        model.addAttribute("transport", transportService.getTransportById(id));
-        return "addedToFavouriteTransport";
+    @Operation(summary = "Удаление груза из избранного по id")
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Все супер,транспорт удален из избранного!"), @ApiResponse(responseCode = "400", description = "Не получилось удалить транспорт..."), @ApiResponse(responseCode = "500", description = "Ошибка на сервере.")})
+    @DeleteMapping("/cargo/{id}")
+    public ResponseEntity<HttpStatus> deleteCargoById(@PathVariable int id) {
+        FavoritesCargo favoritesCargo = favoriteServiceCargo.getCargoById(id);
+        if (favoritesCargo == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } else {
+            favoriteServiceCargo.deleteById(id);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
     }
 
-    @GetMapping("/cargo/allcargo")
-    public String FavCargo(@RequestParam("id") int id, Model model) {
-        favoriteServiceCargo.addCargo(userService.getCurrentUser().getId(), id);
-        model.addAttribute("cargo", cargoService.getCargoById(id));
-        return "addedToFavouriteCargo";
+    @Operation(summary = "Просмотр всех транспортов в избранном")
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Все супер,вот транспорт!"), @ApiResponse(responseCode = "400", description = "Не получилось найти все транспорты..."), @ApiResponse(responseCode = "500", description = "Ошибка на сервере.")})
+    @GetMapping("/cargo")
+    public ResponseEntity<ArrayList<FavoritesCargo>> getAllCargo(int userId) {
+        ArrayList<FavoritesCargo> list = favoriteServiceCargo.findAllByUserId(userId);
+        return new ResponseEntity<>(list, (!list.isEmpty()) ? HttpStatus.OK : HttpStatus.NOT_FOUND);
     }
-
-    @GetMapping()
-    public String showFavourites(Model model) {
-        List<FavoritesCargo> cargos = favoriteServiceCargo.findAllByUserId(userService.getCurrentUser().getId());
-        List<FavoritesTransport> trancports = favoriteServiceTransport.findAllByUserId(userService.getCurrentUser().getId());
-        model.addAttribute("cargos", cargos);
-        model.addAttribute("transports", trancports);
-        model.addAttribute("cargosInf", cargoService.findCargosInf(cargos));
-        model.addAttribute("transportsInf", transportService.findTransportsInf(trancports));
-        return "favourites";
-    }
-
-    @GetMapping("/delete/transport")
-    public String delTransport(@RequestParam("id") int id) {
-        favoriteServiceTransport.deleteById(id);
-        return "redirect:/favorite";
-    }
-
-    @GetMapping("/delete/cargo")
-    public String delCargo(@RequestParam("id") int id) {
-        favoriteServiceCargo.deleteById(id);
-        return "redirect:/favorite";
-    }*/
-
+}
