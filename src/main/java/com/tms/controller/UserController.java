@@ -54,7 +54,11 @@ public class UserController {
     })
     @PostMapping
     public ResponseEntity<?> createUser(@RequestBody @Valid User user, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
+        if (userService.loginExist(user.getEmail())) {
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body("ДАННАЯ ПОЧТА УЖЕ СУЩЕТСВУЕТ:");
+        } else if (bindingResult.hasErrors()) {
             for (ObjectError o : bindingResult.getAllErrors()) {
                 log.warn("We have bindingResult error : " + o);
                 return ResponseEntity
@@ -115,5 +119,53 @@ public class UserController {
         return new ResponseEntity<>(list, (!list.isEmpty()) ? HttpStatus.OK : HttpStatus.NOT_FOUND);
     }
 
+    @Operation(summary = "Просмотр учетной записи авторизованным пользователем ")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Все супер!"),
+            @ApiResponse(responseCode = "400", description = "Не получилось достать по id авториз пользователя..."),
+            @ApiResponse(responseCode = "500", description = "Ошибка на сервере.")
+    })
+    @GetMapping("/currentUser")
+    public ResponseEntity<User> getCurrentUser() {
+        User user = userService.getCurrentUser();
+        if (user == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(user, HttpStatus.OK);
+    }
 
+
+    @Operation(summary = "Изменение авторизованного пользователя пользователя")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Все супер!"),
+            @ApiResponse(responseCode = "400", description = "Не получилось достать по id..."),
+            @ApiResponse(responseCode = "500", description = "Ошибка на сервере.")
+    })
+    @PutMapping("/currentUser")
+    public ResponseEntity<?> updateCurrentUser(@RequestBody @Valid User user, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            for (ObjectError o : bindingResult.getAllErrors()) {
+                log.warn("We have bindingResult error : " + o);
+                return ResponseEntity
+                        .status(HttpStatus.BAD_REQUEST)
+                        .body("ВАЛИДНОСТЬ ДАННЫХ:  " + o);
+            }
+        }
+        userService.updateCurrentUser(user);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @Operation(summary = "Удаление авторизованного пользователя")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Все супер!"),
+            @ApiResponse(responseCode = "400", description = "Не получилось удалить по id..."),
+            @ApiResponse(responseCode = "500", description = "Ошибка на сервере.")
+    })
+    @DeleteMapping("/currentUser")
+    public ResponseEntity<HttpStatus> deleteCurrentUser() {
+
+       userService.deleteCurrentUser(userService.getCurrentUserId());
+       return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+
+    }
 }

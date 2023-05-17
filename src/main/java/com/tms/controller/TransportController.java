@@ -1,8 +1,8 @@
 package com.tms.controller;
 
 import com.tms.domain.Transport;
-import com.tms.domain.User;
 import com.tms.service.TransportService;
+import com.tms.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -12,11 +12,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
+
 
 import javax.validation.Valid;
 import java.util.ArrayList;
@@ -27,12 +26,14 @@ import java.util.List;
 public class TransportController {
 
     TransportService transportService;
+    UserService userService;
 
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-    public TransportController(TransportService transportService) {
+    public TransportController(TransportService transportService, UserService userService) {
         this.transportService = transportService;
+        this.userService = userService;
     }
 
     @Operation(summary = "Он вам отдаст транспорт по его id")
@@ -93,7 +94,7 @@ public class TransportController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @Operation(summary = "Удаление транспорта")
+    @Operation(summary = "Удаление транспорта по id")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Все супер,транспорт удален!"),
             @ApiResponse(responseCode = "400", description = "Не получилось удалить транспорт..."),
@@ -122,7 +123,57 @@ public class TransportController {
         return new ResponseEntity<>(list, (!list.isEmpty()) ? HttpStatus.OK : HttpStatus.NOT_FOUND);
     }
 
+    @Operation(summary = "Просмотр транспортов которые запостил пользователь ")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Все супер!"),
+            @ApiResponse(responseCode = "400", description = "Не получилось достать транспорты..."),
+            @ApiResponse(responseCode = "500", description = "Ошибка на сервере.")
+    })
+    @GetMapping("/currentUser")
+    public ResponseEntity<?> getTransportCurrentUser() {
+        List<Transport> transports = transportService.getCurrentUserTransports(userService.getCurrentUser().getId());
+        if (transports == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(transports, HttpStatus.OK);
+    }
 
+    @Operation(summary = "Удаление транспорта по id,который запостил авторизованный пользователь")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Все супер,транспорт удален!"),
+            @ApiResponse(responseCode = "400", description = "Не получилось удалить транспорт..."),
+            @ApiResponse(responseCode = "500", description = "Ошибка на сервере.")
+    })
+    @DeleteMapping("/currentUser/{id}")
+    public ResponseEntity<?> deleteTransportCurrentUser(@PathVariable int id) {
+        boolean transport = transportService.deleteCurrentUserTransport(id, userService.getCurrentUser().getId());
+        if (!transport) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+    }
+
+    @Operation(summary = "Создание транспорта,авторизированным пользователем")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Все супер,транспорт создан!"),
+            @ApiResponse(responseCode = "400", description = "Не получилось создать транспорт..."),
+            @ApiResponse(responseCode = "500", description = "Ошибка на сервере.")
+    })
+    @PostMapping("/currentUser")
+    public ResponseEntity<?> currentUserCreateTransport(@RequestBody @Valid Transport transport, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            for (ObjectError o : bindingResult.getAllErrors()) {
+                log.warn("We have bindingResult error : " + o);
+                return ResponseEntity
+                        .status(HttpStatus.BAD_REQUEST)
+                        .body("ВАЛИДНОСТЬ ДАННЫХ:  " + o);
+            }
+        }
+        transportService.currentUserCreateTransport(userService.getCurrentUser().getId(), transport);
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+}
 
  /*   @PostMapping()
     public void createTransport(@RequestBody Transport transport) {
@@ -169,4 +220,4 @@ public class TransportController {
         return new ResponseEntity<>(list,(!list.isEmpty())?HttpStatus.OK: HttpStatus.NOT_FOUND);
 
     }*/
-}
+

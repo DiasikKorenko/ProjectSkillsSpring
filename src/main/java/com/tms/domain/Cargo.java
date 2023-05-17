@@ -15,25 +15,25 @@ public class Cargo {
     @SequenceGenerator(name = "cargo_id_seq", sequenceName = "cargo_id_seq", allocationSize = 1)
     //TODO: under config class
     private int id;
-    @Pattern(regexp = "^([0-9]+(?:[\\.][0-9]*)?|\\.[0-9]+)$",
+    @Pattern(regexp = "^[0-9]{1,5}([,.][0-9]+)?$",
             message = "Не соответствие формату weightCargo ")
     @Column(name = "weight_cargo")
-    private int weightCargo;
+    private String weightCargo;
 
-    @Pattern(regexp = "^([0-9]+(?:[\\.][0-9]*)?|\\.[0-9]+)$",
+    @Pattern(regexp = "^[0-9]{1,5}([,.][0-9]+)?$",
             message = "Не соответствие формату widthCargo ")
     @Column(name = "width_cargo")
-    private int widthCargo;
+    private String widthCargo;
 
-    @Pattern(regexp = "^([0-9]+(?:[\\.][0-9]*)?|\\.[0-9]+)$",
+    @Pattern(regexp = "^[0-9]{1,5}([,.][0-9]+)?$",
             message = "Не соответствие формату lenghtCargo ")
     @Column(name = "lenght_cargo")
-    private int lenghtCargo;
+    private String lenghtCargo;
 
-    @Pattern(regexp = "^([0-9]+(?:[\\.][0-9]*)?|\\.[0-9]+)$",
+    @Pattern(regexp = "^[0-9]{1,5}([,.][0-9]+)?$",
             message = "Не соответствие формату hight ")
     @Column(name = "hight")
-    private int hight;
+    private String hight;
 
     @Column(name = "states")
     private String states;

@@ -4,6 +4,7 @@ import com.tms.domain.Cargo;
 import com.tms.domain.Transport;
 import com.tms.domain.User;
 import com.tms.service.CargoService;
+import com.tms.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -26,13 +27,14 @@ import java.util.List;
 @Component
 @RequestMapping("/cargo")
 public class CargoController {
-
     CargoService cargoService;
-
+    UserService userService;
     private final Logger log = LoggerFactory.getLogger(this.getClass());
+
     @Autowired
-    public CargoController(CargoService cargoService) {
+    public CargoController(CargoService cargoService, UserService userService) {
         this.cargoService = cargoService;
+        this.userService = userService;
     }
 
     @Operation(summary = "Он вам отдаст груз по его id")
@@ -42,14 +44,13 @@ public class CargoController {
             @ApiResponse(responseCode = "500", description = "Ошибка на сервере.")
     })
     @GetMapping("/{id}")
-    public ResponseEntity<Cargo> getCagoById(@Parameter(description = "Эта та самая id которую нужно передать")@PathVariable int id) {
+    public ResponseEntity<Cargo> getCagoById(@Parameter(description = "Эта та самая id которую нужно передать") @PathVariable int id) {
         Cargo cargo = cargoService.getCargoById(id);
-        if (cargo == null){
+        if (cargo == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(cargo,HttpStatus.OK);
+        return new ResponseEntity<>(cargo, HttpStatus.OK);
     }
-
 
     @Operation(summary = "Создание груза")
     @ApiResponses(value = {
@@ -71,7 +72,6 @@ public class CargoController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-
     @Operation(summary = "Изменение груза")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Все супер,груз изменен!"),
@@ -79,7 +79,7 @@ public class CargoController {
             @ApiResponse(responseCode = "500", description = "Ошибка на сервере.")
     })
     @PutMapping
-    public ResponseEntity<?> updateTransport(@RequestBody @Valid Cargo cargo,  BindingResult bindingResult) {
+    public ResponseEntity<?> updateTransport(@RequestBody @Valid Cargo cargo, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             for (ObjectError o : bindingResult.getAllErrors()) {
                 log.warn("We have bindingResult error : " + o);
@@ -101,9 +101,9 @@ public class CargoController {
     @DeleteMapping("/{id}")
     public ResponseEntity<HttpStatus> deleteCargo(@PathVariable int id) {
         Cargo cargo = cargoService.getCargoById(id);
-        if (cargo == null){
+        if (cargo == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }else {
+        } else {
             cargoService.deleteCargo(id);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
@@ -121,10 +121,56 @@ public class CargoController {
         return new ResponseEntity<>(list, (!list.isEmpty()) ? HttpStatus.OK : HttpStatus.NOT_FOUND);
     }
 
+    @Operation(summary = "Просмотр грузов которые запостил пользователь ")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Все супер!"),
+            @ApiResponse(responseCode = "400", description = "Не получилось достать грузы..."),
+            @ApiResponse(responseCode = "500", description = "Ошибка на сервере.")
+    })
+    @GetMapping("/currentUser")
+    public ResponseEntity<?> getTransportCurrentUser() {
+        List<Cargo> cargos = cargoService.getCargosByCurrentUserId(userService.getCurrentUser().getId());
+        if (cargos == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(cargos, HttpStatus.OK);
+    }
 
+    @Operation(summary = "Создание груза,авторизированным пользователем")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Все супер,груз создан!"),
+            @ApiResponse(responseCode = "400", description = "Не получилось создать груз..."),
+            @ApiResponse(responseCode = "500", description = "Ошибка на сервере.")
+    })
+    @PostMapping("/currentUser")
+    public ResponseEntity<?> currentUserCreateTransport(@RequestBody @Valid Cargo cargo, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            for (ObjectError o : bindingResult.getAllErrors()) {
+                log.warn("We have bindingResult error : " + o);
+                return ResponseEntity
+                        .status(HttpStatus.BAD_REQUEST)
+                        .body("ВАЛИДНОСТЬ ДАННЫХ:  " + o);
+            }
+        }
+        cargoService.CurrentUserCreateCargo(userService.getCurrentUser().getId(), cargo);
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
 
-
-
+    @Operation(summary = "Удаление груза по id,который запостил авторизованный пользователь")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Все супер,груз удален!"),
+            @ApiResponse(responseCode = "400", description = "Не получилось удалить груз..."),
+            @ApiResponse(responseCode = "500", description = "Ошибка на сервере.")
+    })
+    @DeleteMapping("/currentUser/{id}")
+    public ResponseEntity<?> deleteCurrentUserCargo(@PathVariable int id) {
+        boolean cargo = cargoService.deleteCurrentUserCargo(id, userService.getCurrentUser().getId());
+        if (!cargo) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+    }
 }
 
 

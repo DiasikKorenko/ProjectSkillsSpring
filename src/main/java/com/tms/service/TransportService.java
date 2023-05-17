@@ -88,5 +88,25 @@ public class TransportService {
     public List<Transport> getAllTransports() {
         return transportRepository.getAllTransports();
     }*/
+
+    public List<Transport> getCurrentUserTransports(Integer userId) {
+        List<Transport> transports = transportRepository.findAllByUserId(userId);
+        return transports;
     }
+
+    @Transactional
+    public boolean deleteCurrentUserTransport(Integer transportId, Integer userId) {
+        Transport transportDBEntity = transportRepository.findById(transportId).orElse(null);
+        if (transportDBEntity == null || transportDBEntity.getUserId() != userId)
+            return false;
+        transportRepository.deleteById(transportId);
+        transportRepository.flush();
+        return true;
+    }
+
+    public void currentUserCreateTransport(Integer userId, Transport transport) {
+        transport.setUserId(userId);
+        transportRepository.saveAndFlush(transport);
+    }
+}
 

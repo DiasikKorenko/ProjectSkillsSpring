@@ -1,6 +1,8 @@
 package com.tms.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -55,7 +57,7 @@ public class User {
     @Column(name = "countries")
     private String countries;
 
-    @Pattern(regexp = "^(\\+)?((\\d{2,3}) ?\\d|\\d)(([ -]?\\d)|( ?(\\d{2,3}) ?)){5,12}\\d$",
+    @Pattern(regexp = "^(\\+375|80)(29|25|44|33)(\\d{3})(\\d{2})(\\d{2})$",
             message = "Не соответствие формату номера телефона")
     @Column(name = "telephone_1")
     private String telephone1;
@@ -64,14 +66,15 @@ public class User {
     @Column(name = "telephone_3")
     private String telephone3;
 
-
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @Column(name = "created")
     private Date created;
     @Column(name = "changed")
     private Date changed;
-    @Column(name = "is_deleted")
-    private boolean isDeleted;
 
+    @JsonIgnore
+    @Column(name = "role")
+    private String role="USER";
 
    /* @JsonManagedReference
     @OneToOne(cascade = CascadeType.ALL)

@@ -18,15 +18,15 @@ public class Transport {
     @Column(name = "type_transport")
     private String typeTransport;
 
-    @Pattern(regexp = "^([0-9]+(?:[\\.][0-9]*)?|\\.[0-9]+)$",
-            message = "Не соответствие формату weightTransport ")
+    @Pattern(regexp = "^[0-9]{1,5}([,.][0-9]+)?$",
+            message = "Не соответствие формату номера телефона")
     @Column(name = "weight_transport")
-    private int weightTransport;
+    private String weightTransport;
 
-    @Pattern(regexp = "^([0-9]+(?:[\\.][0-9]*)?|\\.[0-9]+)$",
+    @Pattern(regexp = "^[0-9]{1,5}([,.][0-9]+)?$",
             message = "Не соответствие формату volumeTransport ")
     @Column(name = "volume_transport")
-    private int volumeTransport;
+    private String volumeTransport;
 
     @Column(name = "id_user")
     private int userId;

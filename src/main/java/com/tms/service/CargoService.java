@@ -41,24 +41,24 @@ public class CargoService {
     public ArrayList<Cargo> getAllCargo() {
         return (ArrayList<Cargo>) cargoRepository.findAll();
     }
-  /*  public boolean createCargo(int userId, int weightCargo, int widthCargo, int lenghtCargo, int hight, String states, String route) {
-        return cargoRepository.createCargo(userId,weightCargo,widthCargo,lenghtCargo,hight,states,route);
+
+
+    public List<Cargo> getCargosByCurrentUserId(Integer userId) {
+        return cargoRepository.findAllByUserId(userId);
     }
 
-    public boolean updateCargo(int weightCargo, int widthCargo, int lenghtCargo, int hight, String states, String route, int id, int userId) {
-        return cargoRepository.updateCargo(weightCargo,widthCargo,lenghtCargo,hight,states,route,id,userId);
+    public void CurrentUserCreateCargo(Integer userId, Cargo cargo) {
+        cargo.setUserId(userId);
+        cargoRepository.saveAndFlush(cargo);
     }
 
-    public boolean deleteCargo(int id, int userId) {
-        return cargoRepository.deleteCargo(id,userId);
+    @Transactional
+    public boolean deleteCurrentUserCargo(Integer cargoId, Integer userId) {
+        Cargo cargoDBEntity = cargoRepository.findById(cargoId).orElse(null);
+        if (cargoDBEntity == null || cargoDBEntity.getUserId() != userId)
+            return false;
+        cargoRepository.deleteById(cargoId);
+        cargoRepository.flush();
+        return true;
     }
-
-    public List<Cargo> getUserCargoById(int userId) {
-        return cargoRepository.getUserCargoById(userId);
-    }
-
-    public List<Cargo> getAllCargos() {
-        return cargoRepository.getAllCargos();
-    }
-*/
 }
