@@ -2,63 +2,150 @@ package com.tms.service;
 
 import com.tms.domain.Cargo;
 import com.tms.domain.Transport;
+import com.tms.domain.User;
+import com.tms.domain.response.CargoResponse;
+import com.tms.domain.response.TransportResponse;
+import com.tms.exception.BadRequestEx;
+import com.tms.exception.ForbiddenEx;
+import com.tms.exception.NotFoundEx;
+import com.tms.mapper.CargoToCargoResponseMapper;
 import com.tms.repository.CargoRepository;
+import com.tms.repository.UserRepository;
+import com.tms.security.CheckingAuthorization;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.BindingResult;
 
-import java.util.ArrayList;
+import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class CargoService {
 
-    CargoRepository cargoRepository;
+    private final CargoRepository cargoRepository;
+    private final CargoToCargoResponseMapper cargoToCargoResponseMapper;
+    private final CheckingAuthorization checkingAuthorization;
+    private final UserRepository userRepository;
+
 
     @Autowired
-    public CargoService(CargoRepository cargoRepository) {
+    public CargoService(CargoRepository cargoRepository, CargoToCargoResponseMapper cargoToCargoResponseMapper, CheckingAuthorization checkingAuthorization, UserRepository userRepository) {
         this.cargoRepository = cargoRepository;
+        this.cargoToCargoResponseMapper = cargoToCargoResponseMapper;
+        this.checkingAuthorization = checkingAuthorization;
+        this.userRepository = userRepository;
     }
 
-    public Cargo getCargoById(int id) {
-        return cargoRepository.findById(id).orElse(null);
+    public CargoResponse getCargoResponseById(int id) {
+        Optional<Cargo> selectedCargo = cargoRepository.findById(id);
+        if (selectedCargo.isPresent()) {
+            return cargoToCargoResponseMapper.cargoToResponse(selectedCargo.get());
+        } else {
+            throw new NotFoundEx("Cargo is not found");
+        }
     }
 
-    public Cargo createCargo(Cargo cargo) {
-        return cargoRepository.save(cargo);
+    public List<CargoResponse> getAllCargoResponse() {
+        List<CargoResponse> cargo = cargoRepository.findAll().stream()
+                .map(cargoToCargoResponseMapper::cargoToResponse)
+                .collect(Collectors.toList());
+        if (!cargo.isEmpty()) {
+            return cargo;
+        } else {
+            throw new NotFoundEx("No cargo");
+        }
     }
 
-    public Cargo updateCargo(Cargo cargo) {
-        return cargoRepository.saveAndFlush(cargo);
+    public void createCargo(@Valid Cargo cargo) {
+        Optional<User> selectedUser = userRepository.findById(cargo.getUserId());
+        if (selectedUser.isPresent()) {
+            cargo.setUserEmail(selectedUser.get().getEmail());
+            cargoRepository.save(cargo);
+        } else {
+            throw new NotFoundEx("User is not found");
+        }
+    }
+
+    public void updateCargo(Cargo cargo) {
+        Optional<Cargo> selectedCargo = cargoRepository.findById(cargo.getId());
+        if (selectedCargo.isPresent()) {
+            Cargo upCargo = cargoRepository.findById(cargo.getId()).orElseThrow(() -> new NotFoundEx("Cargo is not found"));
+            if (checkingAuthorization.check(upCargo.getUserEmail())) {
+                cargoRepository.saveAndFlush(cargo);
+            } else {
+                throw new ForbiddenEx("You can't update not your cargo");
+            }
+        } else {
+            throw new NotFoundEx("Cargo is not found");
+        }
     }
 
     @Transactional
     public void deleteCargo(int id) {
-        cargoRepository.deleteById(id);
+        Optional<Cargo> selectedCargo = cargoRepository.findById(id);
+        if (selectedCargo.isPresent()) {
+            if (checkingAuthorization.check(getUserEmail(id))) {
+                cargoRepository.deleteById(id);
+            } else {
+                throw new ForbiddenEx("You can't delete not your cargo");
+            }
+        } else {
+            throw new NotFoundEx("Cargo is not found");
+        }
     }
 
-
-    public ArrayList<Cargo> getAllCargo() {
-        return (ArrayList<Cargo>) cargoRepository.findAll();
+    private String getUserEmail(int id) {
+        return cargoRepository.findById(id).get().getUserEmail();
     }
 
-
-    public List<Cargo> getCargosByCurrentUserId(Integer userId) {
-        return cargoRepository.findAllByUserId(userId);
+    public List<CargoResponse> findCargoResponseByUserId(int userId) {
+        List<CargoResponse> cargos = cargoRepository.findCargoByUserId(userId).stream()
+                .map(cargoToCargoResponseMapper::cargoToResponse)
+                .collect(Collectors.toList());
+        if (!cargos.isEmpty()) {
+            return cargos;
+        } else {
+            throw new NotFoundEx("There are no information from this user");
+        }
     }
 
-    public void CurrentUserCreateCargo(Integer userId, Cargo cargo) {
-        cargo.setUserId(userId);
-        cargoRepository.saveAndFlush(cargo);
+    public Cargo getCargoById(int id) {
+        Optional<Cargo> selectedCargo = cargoRepository.findById(id);
+        if (selectedCargo.isPresent()) {
+            return selectedCargo.get();
+        } else {
+            throw new NotFoundEx("Cargo is not found");
+        }
+    }
+
+    public List<Cargo> getAllCargo() {
+        List<Cargo> cargo = cargoRepository.findAll();
+        if (!cargo.isEmpty()) {
+            return cargo;
+        } else {
+            throw new NotFoundEx("There are no information cargo");
+        }
+    }
+
+    public List<Cargo> findCargoByUserId(int userId) {
+        List<Cargo> cargo = cargoRepository.findCargoByUserId(userId);
+        if (!cargo.isEmpty()) {
+            return cargo;
+        } else {
+            throw new NotFoundEx("There are no information from this user");
+        }
     }
 
     @Transactional
-    public boolean deleteCurrentUserCargo(Integer cargoId, Integer userId) {
-        Cargo cargoDBEntity = cargoRepository.findById(cargoId).orElse(null);
-        if (cargoDBEntity == null || cargoDBEntity.getUserId() != userId)
-            return false;
-        cargoRepository.deleteById(cargoId);
-        cargoRepository.flush();
-        return true;
+    public void deleteCargoByAdmin(int id) {
+        cargoRepository.findById(id).orElseThrow(() -> new NotFoundEx("Cargo is not found"));
+    }
+
+    public void updateCargoAdmin(Cargo cargo) {
+        cargoRepository.findById(cargo.getId()).orElseThrow(() -> new NotFoundEx("Cargo is not found"));
+        cargoRepository.saveAndFlush(cargo);
     }
 }

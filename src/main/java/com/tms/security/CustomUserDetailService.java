@@ -1,6 +1,7 @@
 package com.tms.security;
 
 import com.tms.domain.User;
+import com.tms.exception.NotFoundEx;
 import com.tms.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,7 +21,7 @@ public class CustomUserDetailService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findUserByEmail(username);
+        User user = userRepository.findUserByEmail(username).orElseThrow(() -> new NotFoundEx("There are no user " + username));
 
         UserDetails securityUser = org.springframework.security.core.userdetails.User
                 .builder()

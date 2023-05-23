@@ -103,8 +103,12 @@ public class FavoriteRepository {
 */
 package com.tms.repository;
 
+import com.tms.domain.Cargo;
 import com.tms.domain.FavoritesTransport;
+import com.tms.domain.Reviews;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -112,7 +116,6 @@ import java.util.List;
 
 @Repository
 public interface FavoriteRepositoryTransport extends JpaRepository<FavoritesTransport,Integer> {
-    ArrayList<FavoritesTransport> findByUserId(int userId);
 
+    List<FavoritesTransport> findAllByuserId(int userId);
 }
-

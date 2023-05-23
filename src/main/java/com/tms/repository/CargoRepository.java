@@ -11,5 +11,5 @@ import java.util.List;
 
 @Repository
 public interface CargoRepository extends JpaRepository<Cargo,Integer> {
-    List<Cargo> findAllByUserId(Integer id);
+    List<Cargo> findCargoByUserId (Integer id);
 }

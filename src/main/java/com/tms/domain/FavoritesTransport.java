@@ -20,4 +20,6 @@ public class FavoritesTransport {
     @Column(name = "id_user")
     private int userId;
 
+    @Column(name = "user_email", updatable = false)
+    private String userEmail;
 }

@@ -1,80 +1,74 @@
 package com.tms.service;
 
-import com.tms.domain.Cargo;
 import com.tms.domain.FavoritesTransport;
+import com.tms.domain.Reviews;
 import com.tms.domain.Transport;
 import com.tms.domain.User;
+import com.tms.exception.ForbiddenEx;
+import com.tms.exception.NotFoundEx;
 import com.tms.repository.CargoRepository;
 import com.tms.repository.FavoriteRepositoryTransport;
 import com.tms.repository.TransportRepository;
 import com.tms.repository.UserRepository;
+import com.tms.security.CheckingAuthorization;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class FavoriteServiceTransport {
 
-    FavoriteRepositoryTransport favoriteRepositoryTransport;
-
-    TransportRepository transportRepository;
-    UserRepository userRepository;
+    private final FavoriteRepositoryTransport favoriteRepositoryTransport;
+    private final TransportRepository transportRepository;
+    private final UserRepository userRepository;
+    private final CheckingAuthorization checkingAuthorization;
 
     @Autowired
-    public FavoriteServiceTransport(FavoriteRepositoryTransport favoriteRepositoryTransport, CargoRepository cargoRepository, TransportRepository transportRepository, UserRepository userRepository) {
+    public FavoriteServiceTransport(FavoriteRepositoryTransport favoriteRepositoryTransport, TransportRepository transportRepository, UserRepository userRepository, CheckingAuthorization checkingAuthorization) {
         this.favoriteRepositoryTransport = favoriteRepositoryTransport;
         this.transportRepository = transportRepository;
         this.userRepository = userRepository;
+        this.checkingAuthorization = checkingAuthorization;
     }
 
-    public boolean addTransport(int userId, int transportId) {
-        Transport ftDBEntity = transportRepository.findById(transportId).orElse(null);
-        User userDBEntity = userRepository.findById(userId).orElse(null);
-        if (ftDBEntity == null || userDBEntity == null)
-            return false;
-        FavoritesTransport btf = new FavoritesTransport();
-        btf.setUserId(userId);
-        btf.setTransportId(transportId);
-        favoriteRepositoryTransport.saveAndFlush(btf);
-        return true;
+    public void createTransportFavourite(FavoritesTransport favoritesTransport) {
+        Optional<User> selectedFavoritesUser = userRepository.findById(favoritesTransport.getUserId());
+        Optional<Transport> selectedFavoritesTransport = transportRepository.findById(favoritesTransport.getTransportId());
+        if (selectedFavoritesTransport.isPresent() && selectedFavoritesUser.isPresent()) {
+            favoritesTransport.setUserEmail(selectedFavoritesUser.get().getEmail());
+            favoriteRepositoryTransport.save(favoritesTransport);
+        } else {
+            throw new NotFoundEx("Not found id user/transport");
+        }
     }
-
-/*    @Transactional
-    public boolean deleteById(int id) {
-        FavoritesTransport ftDBEntity = favoriteRepositoryTransport.findById(id).orElse(null);
-        if (ftDBEntity == null)
-            return false;
-        favoriteRepositoryTransport.deleteById(id);
-        return true;
-    }*/
 
     @Transactional
-    public void deleteFavoriteTransport(int id) {
-        favoriteRepositoryTransport.deleteById(id);
+    public void removeTransportFromUser(int id) {
+        Optional<FavoritesTransport> selectedFavTransport = favoriteRepositoryTransport.findById(id);
+        if (selectedFavTransport.isPresent()) {
+            if (checkingAuthorization.check(getUserEmail(id))) {
+                favoriteRepositoryTransport.deleteById(id);
+            } else {
+                throw new ForbiddenEx("You can't delete not your FavoriteTransport");
+            }
+        } else {
+            throw new NotFoundEx("FavoriteTransport is not found");
+        }
     }
 
-    public ArrayList<FavoritesTransport> findAllByUserId(int id) {
-        return favoriteRepositoryTransport.findByUserId(id);
+    private String getUserEmail(int id) {
+        return favoriteRepositoryTransport.findById(id).get().getUserEmail();
     }
 
-    public FavoritesTransport getTransportById(int id) {
-        return favoriteRepositoryTransport.findById(id).orElse(null);
+    public List<FavoritesTransport> getAllFavoritesTransport(int userId) {
+        List<FavoritesTransport> ft = favoriteRepositoryTransport.findAllByuserId(userId);
+        if (!ft.isEmpty()) {
+            return ft;
+        } else {
+            throw new NotFoundEx("There are no any favorite for this user");
+        }
     }
-
-    public boolean addCurrentTransport(int userId, int transportId) {
-        Transport ftDBEntity = transportRepository.findById(transportId).orElse(null);
-        if (ftDBEntity == null)
-            return false;
-        FavoritesTransport btf = new FavoritesTransport();
-        btf.setUserId(userId);
-        btf.setTransportId(transportId);
-        favoriteRepositoryTransport.saveAndFlush(btf);
-        return true;
-
-    }
-
 }
-
