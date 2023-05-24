@@ -1,0 +1,146 @@
+create table public.users
+(
+    id                bigserial
+        constraint "Users_pkey"
+            primary key
+        constraint "Users_ID_key"
+            unique,
+    email             varchar(40)           not null
+        unique,
+    password_user     varchar(200)          not null,
+    job_title         varchar(200)          not null,
+    first_name        varchar(100)          not null,
+    organization_name varchar(100)          not null,
+    legal_address     varchar(100)          not null,
+    unp_or_tin        varchar(20)           not null,
+    countries         varchar(100)          not null,
+    user_name         varchar(100)          not null,
+    last_name         varchar(100)          not null,
+    created           date,
+    changed           date,
+    telephone_1       varchar(100)          not null,
+    telephone_2       varchar(100),
+    telephone_3       varchar(100),
+    role              varchar default USER  not null,
+    is_deleted        boolean default false not null
+);
+
+alter table public.users
+    owner to postgres;
+
+create table public.l_user_cargo
+(
+    id           bigint default nextval('cargo_id_seq'::regclass) not null
+        constraint "Сargo_pkey"
+            primary key
+        constraint "Сargo_id_cargo_key"
+            unique,
+    weight_cargo varchar(20)                                      not null,
+    width_cargo  varchar(20)                                      not null,
+    lenght_cargo varchar(20)                                      not null,
+    hight        varchar(20)                                      not null,
+    states       varchar(200)                                     not null,
+    id_user      integer                                          not null
+        constraint cargo_user_id_fk
+            references public.users
+            on update cascade on delete cascade,
+    route        varchar(200)                                     not null,
+    user_email   varchar(200)
+        constraint l_user_cargo_users_email_fk
+            references public.users (email)
+            on update cascade on delete cascade
+);
+
+alter table public.l_user_cargo
+    owner to postgres;
+
+create table public.l_user_transport
+(
+    id               bigint default nextval('transport_id_seq'::regclass) not null
+        primary key
+        constraint "Transport_id_Transport_key"
+            unique,
+    type_transport   char(200)                                            not null,
+    volume_transport varchar(20)                                          not null,
+    weight_transport varchar(20)                                          not null,
+    id_user          integer                                              not null
+        constraint transport_user_id_fk
+            references public.users
+            on update cascade on delete cascade,
+    user_email       varchar(200)
+        constraint l_user_transport_users_email_fk
+            references public.users (email)
+            on update cascade on delete cascade
+);
+
+alter table public.l_user_transport
+    owner to postgres;
+
+create table public.favorite_transport
+(
+    id           bigint default nextval('favorite_id_seq'::regclass) not null
+        constraint favorite_pkey
+            primary key
+        constraint favorite_id_key
+            unique,
+    id_user      integer                                             not null
+        constraint favorite_users_id_fk
+            references public.users
+            on update cascade on delete cascade,
+    id_transport integer                                             not null
+        constraint favorite_l_user_transport_id_fk
+            references public.l_user_transport
+            on update cascade on delete cascade,
+    user_email   varchar(200)
+);
+
+alter table public.favorite_transport
+    owner to postgres;
+
+create table public.favorite_cargo
+(
+    id         bigserial
+        constraint "favoriteCargo_pkey"
+            primary key
+        constraint "favoriteCargo_id_key"
+            unique,
+    id_cargo   integer not null
+        constraint favoritecargo_l_user_cargo_id_fk
+            references public.l_user_cargo
+            on update cascade on delete cascade,
+    id_user    integer not null
+        constraint favoritecargo_users_id_fk
+            references public.users
+            on update cascade on delete cascade,
+    user_email varchar(200)
+        constraint favorite_cargo_users_email_fk
+            references public.users (email)
+            on update cascade on delete cascade
+);
+
+alter table public.favorite_cargo
+    owner to postgres;
+
+create table public.reviews
+(
+    id                  bigserial
+        constraint " reviews_pkey"
+            primary key
+        constraint " reviews_id_key"
+            unique,
+    reviews             varchar(1000)         not null,
+    created             date,
+    is_deleted          boolean default false not null,
+    from_which_company  varchar(200)          not null
+        constraint reviews_users_email_fk
+            references public.users (email)
+            on update cascade on delete cascade,
+    about_which_company integer               not null
+        constraint reviews_users_id_fk
+            references public.users
+            on update cascade on delete cascade
+);
+
+alter table public.reviews
+    owner to postgres;
+
