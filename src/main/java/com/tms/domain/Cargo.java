@@ -4,7 +4,6 @@ import lombok.Data;
 
 import javax.persistence.*;
 import javax.validation.constraints.Pattern;
-import java.sql.Date;
 
 @Data
 @Entity
@@ -36,7 +35,7 @@ public class Cargo {
     @Column(name = "route")
     private String route;
 
-    @Column(name = "id_user",updatable = false)
+    @Column(name = "id_user", updatable = false)
     private int userId;
 
     @Column(name = "user_email", updatable = false)

@@ -1,19 +1,10 @@
 package com.tms.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
-import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
-import javax.validation.constraints.Email;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
-import java.sql.Date;
 import java.sql.Timestamp;
 
 
@@ -45,7 +36,7 @@ public class User {
     private String email;
 
     @Size(min = 2, max = 100)
-    @Column(name = "password_user",updatable = false)
+    @Column(name = "password_user", updatable = false)
     private String passwordUser;
 
     @Pattern(regexp = "^(?=.{1,40}$)[a-zA-Zа-яА-Я]+(?:[\\s-][a-zA-Zа-яА-Я]+)*$")
@@ -76,7 +67,7 @@ public class User {
     @Column(name = "telephone_3")
     private String telephone3;
 
-    @Column(name = "created",updatable = false)
+    @Column(name = "created", updatable = false)
     private Timestamp created;
     @Column(name = "changed")
     private Timestamp changed;
@@ -84,7 +75,7 @@ public class User {
     private boolean isDeleted;
 
     @Column(name = "role", updatable = false)
-    private String role ;
+    private String role;
 
 
 }

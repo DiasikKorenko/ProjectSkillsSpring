@@ -1,9 +1,7 @@
 package com.tms.mapper;
 
 import com.tms.domain.Cargo;
-import com.tms.domain.Transport;
 import com.tms.domain.response.CargoResponse;
-import com.tms.domain.response.TransportResponse;
 import org.springframework.stereotype.Component;
 
 @Component

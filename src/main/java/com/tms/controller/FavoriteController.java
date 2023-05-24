@@ -8,26 +8,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RestController
 @RequestMapping("/favorite")
 public class FavoriteController {
 
-    FavoriteServiceTransport favoriteServiceTransport;
-    FavoriteServiceCargo favoriteServiceCargo;
-    private final UserService userService;
-    TransportService transportService;
-    CargoService cargoService;
+    private final FavoriteServiceTransport favoriteServiceTransport;
+    private final FavoriteServiceCargo favoriteServiceCargo;
 
     @Autowired
-    public FavoriteController(FavoriteServiceTransport favoriteServiceTransport, FavoriteServiceCargo favoriteServiceCargo, UserService userService, TransportService transportService, CargoService cargoService) {
+    public FavoriteController(FavoriteServiceTransport favoriteServiceTransport, FavoriteServiceCargo favoriteServiceCargo) {
         this.favoriteServiceTransport = favoriteServiceTransport;
         this.favoriteServiceCargo = favoriteServiceCargo;
-        this.userService = userService;
-        this.transportService = transportService;
-        this.cargoService = cargoService;
-
     }
 
     @Operation(summary = "Add transport to user's Favourite")
@@ -58,7 +52,7 @@ public class FavoriteController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @Operation(summary = "Provide all all transport' information  for one user")
+    @Operation(summary = "Provide all all transport's information  for one user")
     @GetMapping("/transport/admin/{userId}")
     public ResponseEntity<List<FavoritesTransport>> getAllFavoritesTransport(@PathVariable int userId) {
         return new ResponseEntity<>(favoriteServiceTransport.getAllFavoritesTransport(userId), HttpStatus.OK);

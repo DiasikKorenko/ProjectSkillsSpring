@@ -1,6 +1,7 @@
 package com.tms.domain.response;
 
 import lombok.Data;
+
 import java.util.Date;
 
 @Data

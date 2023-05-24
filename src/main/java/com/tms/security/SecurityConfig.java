@@ -1,78 +1,4 @@
-/*
-
 package com.tms.security;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.SecurityFilterChain;
-
-@Configuration
-@EnableWebSecurity
-public class SecurityConfig {
-
-
-  private final CustomUserDetailService customUserDetailService;
-
-
-    @Autowired
-    public SecurityConfig(CustomUserDetailService customUserDetailService) {
-        this.customUserDetailService = customUserDetailService;
-    }
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        return http.csrf().disable()
-
-                .authorizeRequests()
-                .antMatchers(HttpMethod.POST, "/home", "/login").permitAll()
-                .antMatchers(HttpMethod.POST, "/user/registration").permitAll()
-
-                .antMatchers(HttpMethod.POST, "/user/login").permitAll()
-
-                .antMatchers(HttpMethod.GET, "/home").permitAll()
-                .antMatchers(HttpMethod.GET, "/user/registration").permitAll()
-                .anyRequest().authenticated()
-                .and()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
-                .httpBasic()
-                .and()
-                .build();
-    }
-
-@Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-
-
-
-
-   @Bean
-    public  SecurityFilterChain securityFilterChain(HttpSecurity http)throws Exception{
-        http
-                .authorizeRequests()
-                .antMatchers(HttpMethod.GET, "/home", "/login").permitAll()
-                .anyRequest()
-                .authenticated()
-                .and()
-                .httpBasic();
-        return http.build();
-
-    }
-
-}
-*/
-
-package com.tms.security;
-
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -105,7 +31,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.PUT, "/user/admin/**").hasAnyRole("ADMIN")
                 .antMatchers(HttpMethod.DELETE, "/user/**").hasRole("USER")
                 .antMatchers(HttpMethod.DELETE, "/user/admin/**").hasRole("ADMIN")
-
                 .antMatchers(HttpMethod.GET, "/transport").permitAll()
                 .antMatchers(HttpMethod.GET, "/transport/{id}").permitAll()
                 .antMatchers(HttpMethod.GET, "/transport/fromUser/**").hasAnyRole("USER")
@@ -116,7 +41,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.PUT, "/transport/admin/**").hasAnyRole("ADMIN")
                 .antMatchers(HttpMethod.DELETE, "/transport/**").hasRole("USER")
                 .antMatchers(HttpMethod.DELETE, "/transport/admin/**").hasRole("ADMIN")
-
                 .antMatchers(HttpMethod.GET, "/cargo").permitAll()
                 .antMatchers(HttpMethod.GET, "/cargo/{id}").permitAll()
                 .antMatchers(HttpMethod.GET, "/cargo/fromUser/**").hasAnyRole("USER")
@@ -127,20 +51,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.PUT, "/cargo/admin/**").hasAnyRole("ADMIN")
                 .antMatchers(HttpMethod.DELETE, "/cargo/**").hasRole("USER")
                 .antMatchers(HttpMethod.DELETE, "/cargo/admin/**").hasRole("ADMIN")
-
                 .antMatchers(HttpMethod.GET, "/reviews").permitAll()
                 .antMatchers(HttpMethod.GET, "/reviews/admin/**").hasAnyRole("ADMIN")
-                .antMatchers(HttpMethod.POST, "/reviews").hasAnyRole("USER")
+                .antMatchers(HttpMethod.POST, "/reviews").hasAnyRole("USER","ADMIN")
                 .antMatchers(HttpMethod.PUT, "/reviews/**").hasAnyRole("USER")
                 .antMatchers(HttpMethod.DELETE, "/reviews/**").hasRole("USER")
                 .antMatchers(HttpMethod.DELETE, "/reviews/admin/**").hasRole("ADMIN")
-
                 .antMatchers(HttpMethod.GET, "/favorite/**").hasRole("ADMIN")
                 .antMatchers(HttpMethod.POST, "/favorite/**").hasAnyRole("USER")
                 .antMatchers(HttpMethod.DELETE, "/favorite/**").hasRole("USER")
                 .antMatchers("/swagger/**").hasRole("ADMIN")
                 .antMatchers("/actuator/**").hasRole("ADMIN")
-
                 .anyRequest()
                 .authenticated()
                 .and()

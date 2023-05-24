@@ -77,4 +77,7 @@ Application use PostgreSQL database. For start the application you need Postgres
 The technology stack of this project: Java, PostgreSQL,  Hibernate, Spring (Boot, Security, Data),
 Lombok, AOP, Swagger, Maven, Mockito.
 
+## Link to the DockerHub
+* https://hub.docker.com/r/korenkodianka/projectskillsspring
 <br>
+
