@@ -18,27 +18,35 @@ import java.util.Optional;
 @Service
 public class FavoriteServiceCargo {
 
-    FavoriteRepositoryCargo favoriteRepositoryCargo;
-    CargoRepository cargoRepository;
-    UserRepository userRepository;
+    private final FavoriteRepositoryCargo favoriteRepositoryCargo;
+    private final CargoRepository cargoRepository;
+    private final UserRepository userRepository;
     private final CheckingAuthorization checkingAuthorization;
 
+    private final UserService userService;
+
     @Autowired
-    public FavoriteServiceCargo(FavoriteRepositoryCargo favoriteRepositoryCargo, CargoRepository cargoRepository, UserRepository userRepository, CheckingAuthorization checkingAuthorization) {
+    public FavoriteServiceCargo(FavoriteRepositoryCargo favoriteRepositoryCargo, CargoRepository cargoRepository, UserRepository userRepository, CheckingAuthorization checkingAuthorization, UserService userService) {
         this.favoriteRepositoryCargo = favoriteRepositoryCargo;
         this.cargoRepository = cargoRepository;
         this.userRepository = userRepository;
         this.checkingAuthorization = checkingAuthorization;
+        this.userService = userService;
     }
 
     public void createCargoFavourite(FavoritesCargo favoritesCargo) {
         Optional<User> selectedFavoritesUser = userRepository.findById(favoritesCargo.getUserId());
         Optional<Cargo> selectedFavoritesCargo = cargoRepository.findById(favoritesCargo.getCargoId());
         if (selectedFavoritesCargo.isPresent() && selectedFavoritesUser.isPresent()) {
-            favoritesCargo.setUserEmail(selectedFavoritesUser.get().getEmail());
-            favoriteRepositoryCargo.save(favoritesCargo);
+            if (checkingAuthorization.check(selectedFavoritesUser.get().getEmail())) {
+                favoritesCargo.setUserEmail(selectedFavoritesUser.get().getEmail());
+                favoriteRepositoryCargo.save(favoritesCargo);
+            }else{
+                throw new ForbiddenEx("You can't add FavoriteCargo another user");
+            }
         } else {
             throw new NotFoundEx("Not found id user/cargo");
+
         }
     }
 

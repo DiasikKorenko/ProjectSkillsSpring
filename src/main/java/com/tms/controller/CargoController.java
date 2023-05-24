@@ -36,7 +36,7 @@ public class CargoController {
 
     @Operation(summary = "Creation of cargo")
     @PostMapping()
-    public ResponseEntity<Cargo> createTransport(@RequestBody Cargo cargo, BindingResult bindingResult) {
+    public ResponseEntity<Cargo> createCargo(@RequestBody Cargo cargo, BindingResult bindingResult) {
         if (!bindingResult.hasErrors()) {
             cargoService.createCargo(cargo);
             return new ResponseEntity<>(HttpStatus.CREATED);

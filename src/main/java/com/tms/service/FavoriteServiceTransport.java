@@ -38,9 +38,13 @@ public class FavoriteServiceTransport {
         Optional<User> selectedFavoritesUser = userRepository.findById(favoritesTransport.getUserId());
         Optional<Transport> selectedFavoritesTransport = transportRepository.findById(favoritesTransport.getTransportId());
         if (selectedFavoritesTransport.isPresent() && selectedFavoritesUser.isPresent()) {
-            favoritesTransport.setUserEmail(selectedFavoritesUser.get().getEmail());
-            favoriteRepositoryTransport.save(favoritesTransport);
-        } else {
+            if (checkingAuthorization.check(selectedFavoritesUser.get().getEmail())) {
+                favoritesTransport.setUserEmail(selectedFavoritesUser.get().getEmail());
+                favoriteRepositoryTransport.save(favoritesTransport);
+            } else {
+                throw new ForbiddenEx("You can't add FavoriteCargo another user");
+            }
+        }else {
             throw new NotFoundEx("Not found id user/transport");
         }
     }

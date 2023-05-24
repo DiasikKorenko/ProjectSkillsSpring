@@ -55,6 +55,7 @@ class FavoriteServiceCargoTest {
     public void createCargoFavouriteTest() {
         when(userRepository.findById(id)).thenReturn(Optional.of(user));
         when(cargoRepository.findById(id)).thenReturn(Optional.of(cargo));
+        when(checkingAuthorization.check(Optional.of(user).get().getEmail())).thenReturn(true);
         favoriteServiceCargo.createCargoFavourite(favoritesCargo);
         verify(favoriteRepositoryCargo).save(favoritesCargo);
     }

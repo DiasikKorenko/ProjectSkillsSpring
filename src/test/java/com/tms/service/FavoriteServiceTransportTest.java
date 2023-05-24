@@ -58,6 +58,7 @@ class FavoriteServiceTransportTest {
     public void createTransportFavouriteTest() {
         when(userRepository.findById(id)).thenReturn(Optional.of(user));
         when(transportRepository.findById(id)).thenReturn(Optional.of(transport));
+        when(checkingAuthorization.check(Optional.of(user).get().getEmail())).thenReturn(true);
         favoriteServiceTransport.createTransportFavourite(favoritesTransport);
         verify(favoriteRepositoryTransport).save(favoritesTransport);
     }
