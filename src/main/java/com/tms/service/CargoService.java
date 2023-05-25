@@ -1,11 +1,8 @@
 package com.tms.service;
 
 import com.tms.domain.Cargo;
-import com.tms.domain.Transport;
 import com.tms.domain.User;
 import com.tms.domain.response.CargoResponse;
-import com.tms.domain.response.TransportResponse;
-import com.tms.exception.BadRequestEx;
 import com.tms.exception.ForbiddenEx;
 import com.tms.exception.NotFoundEx;
 import com.tms.mapper.CargoToCargoResponseMapper;
@@ -15,9 +12,7 @@ import com.tms.security.CheckingAuthorization;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.BindingResult;
 
-import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -29,7 +24,6 @@ public class CargoService {
     private final CargoToCargoResponseMapper cargoToCargoResponseMapper;
     private final CheckingAuthorization checkingAuthorization;
     private final UserRepository userRepository;
-
 
     @Autowired
     public CargoService(CargoRepository cargoRepository, CargoToCargoResponseMapper cargoToCargoResponseMapper, CheckingAuthorization checkingAuthorization, UserRepository userRepository) {
@@ -59,7 +53,7 @@ public class CargoService {
         }
     }
 
-    public void createCargo(@Valid Cargo cargo) {
+    public void createCargo(Cargo cargo) {
         Optional<User> selectedUser = userRepository.findById(cargo.getUserId());
         if (selectedUser.isPresent()) {
             cargo.setUserEmail(selectedUser.get().getEmail());

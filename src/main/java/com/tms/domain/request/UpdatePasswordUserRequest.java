@@ -10,6 +10,7 @@ import javax.validation.constraints.Size;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UpdatePasswordUserRequest {
+
     private int id;
 
     @Size(min = 2, max = 100)

@@ -17,5 +17,4 @@ public class UserResponse {
     private String telephone1;
     private String telephone2;
     private String telephone3;
-
 }

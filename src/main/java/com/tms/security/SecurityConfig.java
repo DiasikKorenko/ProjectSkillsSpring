@@ -51,14 +51,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.DELETE, "/cargo/admin/**").hasRole("ADMIN")
                 .antMatchers(HttpMethod.GET, "/reviews").permitAll()
                 .antMatchers(HttpMethod.GET, "/reviews/admin/**").hasAnyRole("ADMIN")
-                .antMatchers(HttpMethod.POST, "/reviews").hasAnyRole("USER","ADMIN")
+                .antMatchers(HttpMethod.POST, "/reviews").hasAnyRole("USER", "ADMIN")
                 .antMatchers(HttpMethod.PUT, "/reviews/**").hasAnyRole("USER")
                 .antMatchers(HttpMethod.DELETE, "/reviews/**").hasRole("USER")
                 .antMatchers(HttpMethod.DELETE, "/reviews/admin/**").hasRole("ADMIN")
                 .antMatchers(HttpMethod.GET, "/favorite/**").hasRole("ADMIN")
                 .antMatchers(HttpMethod.POST, "/favorite/**").hasAnyRole("USER")
                 .antMatchers(HttpMethod.DELETE, "/favorite/**").hasRole("USER")
-                .antMatchers("/swagger/**").permitAll()
+                .antMatchers("/swagger/**").hasAnyRole("USER", "ADMIN")
                 .antMatchers("/actuator/**").hasRole("ADMIN")
                 .anyRequest()
                 .authenticated()
@@ -80,5 +80,4 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder(8);
     }
-
 }

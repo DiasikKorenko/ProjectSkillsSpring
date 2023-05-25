@@ -11,5 +11,4 @@ public class CargoResponse {
     private String hight;
     private String states;
     private String route;
-
 }

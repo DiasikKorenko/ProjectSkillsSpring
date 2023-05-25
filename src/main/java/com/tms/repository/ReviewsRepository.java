@@ -9,8 +9,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface ReviewsRepository extends JpaRepository<Reviews,Integer> {
-
+public interface ReviewsRepository extends JpaRepository<Reviews, Integer> {
     @Modifying
     @Query(
             nativeQuery = true,
@@ -26,5 +25,4 @@ public interface ReviewsRepository extends JpaRepository<Reviews,Integer> {
     void deleteReviews(int id);
 
     List<Reviews> findAllBytoWhichCompanyId(int toWhichCompanyId);
-
 }

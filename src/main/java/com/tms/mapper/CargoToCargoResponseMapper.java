@@ -6,7 +6,6 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class CargoToCargoResponseMapper {
-
     public CargoResponse cargoToResponse(Cargo cargo) {
         CargoResponse cargoResponse = new CargoResponse();
         cargoResponse.setWeightCargo(cargo.getWeightCargo());

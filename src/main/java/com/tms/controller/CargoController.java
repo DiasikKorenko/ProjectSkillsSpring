@@ -9,7 +9,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import javax.validation.Valid;
 import java.util.List;
 
@@ -22,6 +31,7 @@ public class CargoController {
     public CargoController(CargoService cargoService) {
         this.cargoService = cargoService;
     }
+
     @Operation(summary = "Cargo information for the user")
     @GetMapping("/{id}")
     public ResponseEntity<CargoResponse> getCargoResponseById(@PathVariable int id) {
@@ -36,14 +46,15 @@ public class CargoController {
 
     @Operation(summary = "Creation of cargo")
     @PostMapping()
-    public ResponseEntity<Cargo> createCargo(@RequestBody Cargo cargo, BindingResult bindingResult) {
+    public ResponseEntity<Cargo> createCargo(@RequestBody @Valid Cargo cargo, BindingResult bindingResult) {
         if (!bindingResult.hasErrors()) {
             cargoService.createCargo(cargo);
             return new ResponseEntity<>(HttpStatus.CREATED);
-        }else{
+        } else {
             throw new BadRequestEx("Validation error.Check the entered data");
         }
     }
+
     @Operation(summary = "Cargo change for the user")
     @PutMapping
     public ResponseEntity<HttpStatus> updateCargo(@RequestBody @Valid Cargo cargo, BindingResult bindingResult) {

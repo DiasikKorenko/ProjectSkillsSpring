@@ -1,12 +1,10 @@
 package com.tms.service;
 
 import com.tms.domain.FavoritesTransport;
-import com.tms.domain.Reviews;
 import com.tms.domain.Transport;
 import com.tms.domain.User;
 import com.tms.exception.ForbiddenEx;
 import com.tms.exception.NotFoundEx;
-import com.tms.repository.CargoRepository;
 import com.tms.repository.FavoriteRepositoryTransport;
 import com.tms.repository.TransportRepository;
 import com.tms.repository.UserRepository;
@@ -44,7 +42,7 @@ public class FavoriteServiceTransport {
             } else {
                 throw new ForbiddenEx("You can't add FavoriteCargo another user");
             }
-        }else {
+        } else {
             throw new NotFoundEx("Not found id user/transport");
         }
     }
@@ -68,7 +66,7 @@ public class FavoriteServiceTransport {
     }
 
     public List<FavoritesTransport> getAllFavoritesTransport(int userId) {
-        List<FavoritesTransport> ft = favoriteRepositoryTransport.findAllByuserId(userId);
+        List<FavoritesTransport> ft = favoriteRepositoryTransport.findAllByUserId(userId);
         if (!ft.isEmpty()) {
             return ft;
         } else {

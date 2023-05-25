@@ -1,6 +1,5 @@
 package com.tms.service;
 
-
 import com.tms.domain.User;
 import com.tms.domain.request.UpdatePasswordUserRequest;
 import com.tms.domain.response.UserResponse;
@@ -15,11 +14,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.stream.Collectors;
-
 
 @Service
 public class UserService {
@@ -28,7 +25,6 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final CheckingAuthorization checkingAuthorization;
     private final UserToUserResponseMapper userToUserResponseMapper;
-
 
     @Autowired
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, CheckingAuthorization checkingAuthorization, UserToUserResponseMapper userToUserResponseMapper) {
@@ -73,8 +69,7 @@ public class UserService {
     }
 
     public boolean loginExist(String email) {
-        boolean result = userRepository.findUserByEmail(email).isPresent() ? true : false;
-        return result;
+        return userRepository.findUserByEmail(email).isPresent() ? true : false;
     }
 
     @Transactional
@@ -138,7 +133,6 @@ public class UserService {
         return userRepository.findById(id).orElseThrow(() -> new NotFoundEx("User is not found"));
     }
 
-
     @Transactional
     public void deleteUserByAdmin(int id) {
         User user = userRepository.findById(id).orElseThrow(() -> new NotFoundEx("User is not found"));
@@ -160,93 +154,4 @@ public class UserService {
             userRepository.saveAndFlush(user);
         }
     }
-
 }
-
-
-
-
-
-
-
-
-
-
-
-/*    public User createUser(User user) {
-        user.setCreated(new Date(System.currentTimeMillis()));
-        user.setChanged(new Date(System.currentTimeMillis()));
-        user.setPasswordUser(passwordEncoder.encode(user.getPasswordUser()));
-        return userRepository.save(user);
-    }
-
-    public User updateUser(User user) {
-        user.setCreated(new Date(System.currentTimeMillis()));
-        user.setPasswordUser(passwordEncoder.encode(user.getPasswordUser()));
-        return userRepository.saveAndFlush(user);
-    }
-
-    @Transactional
-    public void deleteUser(int id) {
-        userRepository.deleteById(id);
-    }
-
-    public ArrayList<User> getAllUsers() {
-
-        return (ArrayList<User>) userRepository.findAll();
-    }
-
-
-    public User getCurrentUser() {
-        if (this.currentUser != null)
-            return this.currentUser;
-        else {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            String email = authentication.getName();
-            User user = userRepository.findUserByEmail(email);
-            this.currentUser = user;
-            return user;
-        }
-    }
-
-    public void updateCurrentUser(User user) {
-        User currentUser = getCurrentUser();
-        if (currentUser != null)
-            updateUserById(currentUser.getId(), user);
-    }
-
-    public Boolean updateUserById(int id, User user) {
-        User userDBEntity = getUserById(id);
-        if (userDBEntity == null)
-            return false;
-        if (user.getPasswordUser() != null)
-            userDBEntity.setPasswordUser(passwordEncoder.encode(user.getPasswordUser()));
-        userDBEntity.setChanged(new Date(new java.util.Date().getTime()));
-        userRepository.saveAndFlush(userDBEntity);
-        return true;
-    }
-
-    @Transactional
-    public void deleteCurrentUser(int id) {
-        userRepository.deleteById(id);
-        userRepository.flush();
-    }
-
-
-    public boolean loginExist(String login) {
-        boolean b = userRepository.findUserByEmail(login) != null ? true : false;
-        return b;
-    }
-
-    public boolean findUserById(int id) {
-        return userRepository.findUserById(id) != null;
-    }
-
-    public Integer getCurrentUserId() {
-        if (currentUser != null)
-            return currentUser.getId();
-        return null;
-    }*/
-
-
-

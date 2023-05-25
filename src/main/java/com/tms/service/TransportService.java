@@ -1,10 +1,8 @@
 package com.tms.service;
 
-import com.tms.domain.Cargo;
 import com.tms.domain.Transport;
 import com.tms.domain.User;
 import com.tms.domain.response.TransportResponse;
-import com.tms.exception.BadRequestEx;
 import com.tms.exception.ForbiddenEx;
 import com.tms.exception.NotFoundEx;
 import com.tms.mapper.TransportToTransportResponseMapper;
@@ -14,7 +12,6 @@ import com.tms.security.CheckingAuthorization;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.BindingResult;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -27,7 +24,6 @@ public class TransportService {
     private final TransportRepository transportRepository;
     private final TransportToTransportResponseMapper transportToTransportResponseMapper;
     private final CheckingAuthorization checkingAuthorization;
-
     private final UserRepository userRepository;
 
     @Autowired
@@ -63,7 +59,7 @@ public class TransportService {
         if (selectedUser.isPresent()) {
             transport.setUserEmail(selectedUser.get().getEmail());
             transportRepository.save(transport);
-        }else {
+        } else {
             throw new NotFoundEx("User is not found");
         }
     }
@@ -107,8 +103,6 @@ public class TransportService {
         }
     }
 
-
-
     public Transport getTransportById(int id) {
         Optional<Transport> selectedTransport = transportRepository.findById(id);
         if (selectedTransport.isPresent()) {
@@ -146,4 +140,3 @@ public class TransportService {
         transportRepository.saveAndFlush(transport);
     }
 }
-

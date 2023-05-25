@@ -6,8 +6,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class ReviewsToReviewsResponseMapper {
-
-    public ReviewsResponse reviewsToResponse(Reviews reviews){
+    public ReviewsResponse reviewsToResponse(Reviews reviews) {
         ReviewsResponse reviewsResponse = new ReviewsResponse();
         reviewsResponse.setReview(reviews.getReview());
         reviewsResponse.setCreated(reviews.getCreated());

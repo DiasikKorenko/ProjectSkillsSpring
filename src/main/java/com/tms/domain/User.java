@@ -7,7 +7,6 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.sql.Timestamp;
 
-
 @Data
 @Entity
 @Table(name = "users")
@@ -16,7 +15,6 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_id_seq")
     @SequenceGenerator(name = "user_id_seq", sequenceName = "users_id_seq", allocationSize = 1)
-    //TODO: under config class
     private int id;
 
     @Pattern(regexp = "^(?=.{1,40}$)[a-zA-Zа-яА-Я]+(?:[\\s-][a-zA-Zа-яА-Я]+)*$")
@@ -60,22 +58,24 @@ public class User {
     @Pattern(regexp = "^(\\+375|80)(29|25|44|33)(\\d{3})(\\d{2})(\\d{2})$")
     @Column(name = "telephone_1")
     private String telephone1;
+
     @Pattern(regexp = "^(\\+375|80)(29|25|44|33)(\\d{3})(\\d{2})(\\d{2})$")
     @Column(name = "telephone_2")
     private String telephone2;
+
     @Pattern(regexp = "^(\\+375|80)(29|25|44|33)(\\d{3})(\\d{2})(\\d{2})$")
     @Column(name = "telephone_3")
     private String telephone3;
 
     @Column(name = "created", updatable = false)
     private Timestamp created;
+
     @Column(name = "changed")
     private Timestamp changed;
+
     @Column(name = "is_deleted")
     private boolean isDeleted;
 
     @Column(name = "role", updatable = false)
     private String role;
-
-
 }

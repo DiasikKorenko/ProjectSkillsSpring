@@ -6,7 +6,6 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class TransportToTransportResponseMapper {
-
     public TransportResponse transportToResponse(Transport transport) {
         TransportResponse transportResponse = new TransportResponse();
         transportResponse.setTypeTransport(transport.getTypeTransport());

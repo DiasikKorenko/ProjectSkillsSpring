@@ -13,7 +13,6 @@ public class Reviews {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "reviews_id_seq")
     @SequenceGenerator(name = "reviews_id_seq", sequenceName = "reviews_id_seq", allocationSize = 1)
-    //TODO: under config class
     private int id;
 
     @Column(name = "reviews")
@@ -30,5 +29,4 @@ public class Reviews {
 
     @Column(name = "is_deleted")
     private boolean isDeleted;
-
 }

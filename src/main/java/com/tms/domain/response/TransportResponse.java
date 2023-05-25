@@ -8,5 +8,4 @@ public class TransportResponse {
     private String typeTransport;
     private String weightTransport;
     private String volumeTransport;
-
 }

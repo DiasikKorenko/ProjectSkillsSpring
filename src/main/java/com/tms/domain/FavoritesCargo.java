@@ -12,7 +12,6 @@ public class FavoritesCargo {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "favorite_cargo_id_seq")
     @SequenceGenerator(name = "favorite_cargo_id_seq", sequenceName = "favorite_cargo_id_seq", allocationSize = 1)
-    //TODO: under config class
     private int id;
 
     @Column(name = "id_cargo")

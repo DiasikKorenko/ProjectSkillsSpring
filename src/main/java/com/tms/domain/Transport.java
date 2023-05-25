@@ -9,10 +9,10 @@ import javax.validation.constraints.Pattern;
 @Entity
 @Table(name = "l_user_transport")
 public class Transport {
+
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "transport_id_seq")
     @SequenceGenerator(name = "transport_id_seq", sequenceName = "transport_id_seq", allocationSize = 1)
-    //TODO: under config class
     private int id;
 
     @Column(name = "type_transport")
@@ -31,6 +31,4 @@ public class Transport {
 
     @Column(name = "user_email", updatable = false)
     private String userEmail;
-
-
 }

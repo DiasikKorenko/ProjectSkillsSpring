@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface FavoriteRepositoryCargo extends JpaRepository<FavoritesCargo, Integer> {
-    List<FavoritesCargo> findAllByuserId(int userId);
+    List<FavoritesCargo> findAllByUserId(int userId);
 }

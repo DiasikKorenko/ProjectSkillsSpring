@@ -8,6 +8,5 @@ import java.util.List;
 
 @Repository
 public interface FavoriteRepositoryTransport extends JpaRepository<FavoritesTransport, Integer> {
-
-    List<FavoritesTransport> findAllByuserId(int userId);
+    List<FavoritesTransport> findAllByUserId(int userId);
 }

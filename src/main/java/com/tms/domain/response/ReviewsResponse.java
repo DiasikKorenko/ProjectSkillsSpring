@@ -9,5 +9,4 @@ public class ReviewsResponse {
 
     private String review;
     private Date created;
-
 }

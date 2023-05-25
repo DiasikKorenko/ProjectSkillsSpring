@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface CargoRepository extends JpaRepository<Cargo,Integer> {
-    List<Cargo> findCargoByUserId (Integer id);
+public interface CargoRepository extends JpaRepository<Cargo, Integer> {
+    List<Cargo> findCargoByUserId(Integer id);
 }

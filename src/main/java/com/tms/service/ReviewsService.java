@@ -1,6 +1,5 @@
 package com.tms.service;
 
-
 import com.tms.domain.Reviews;
 import com.tms.domain.User;
 import com.tms.domain.response.ReviewsResponse;
@@ -22,6 +21,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class ReviewsService {
+
     private final ReviewsToReviewsResponseMapper reviewsToReviewsResponseMapper;
     private final ReviewsRepository reviewsRepository;
     private final CheckingAuthorization checkingAuthorization;
@@ -90,7 +90,6 @@ public class ReviewsService {
         }
     }
 
-
     public List<Reviews> getAllReviewsForCompany(int toWhichCompanyId) {
         List<Reviews> review = reviewsRepository.findAllBytoWhichCompanyId(toWhichCompanyId);
         if (!review.isEmpty()) {
@@ -110,41 +109,3 @@ public class ReviewsService {
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

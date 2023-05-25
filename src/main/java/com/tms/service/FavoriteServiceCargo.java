@@ -1,7 +1,8 @@
 package com.tms.service;
 
-
-import com.tms.domain.*;
+import com.tms.domain.Cargo;
+import com.tms.domain.FavoritesCargo;
+import com.tms.domain.User;
 import com.tms.exception.ForbiddenEx;
 import com.tms.exception.NotFoundEx;
 import com.tms.repository.CargoRepository;
@@ -23,15 +24,12 @@ public class FavoriteServiceCargo {
     private final UserRepository userRepository;
     private final CheckingAuthorization checkingAuthorization;
 
-    private final UserService userService;
-
     @Autowired
-    public FavoriteServiceCargo(FavoriteRepositoryCargo favoriteRepositoryCargo, CargoRepository cargoRepository, UserRepository userRepository, CheckingAuthorization checkingAuthorization, UserService userService) {
+    public FavoriteServiceCargo(FavoriteRepositoryCargo favoriteRepositoryCargo, CargoRepository cargoRepository, UserRepository userRepository, CheckingAuthorization checkingAuthorization) {
         this.favoriteRepositoryCargo = favoriteRepositoryCargo;
         this.cargoRepository = cargoRepository;
         this.userRepository = userRepository;
         this.checkingAuthorization = checkingAuthorization;
-        this.userService = userService;
     }
 
     public void createCargoFavourite(FavoritesCargo favoritesCargo) {
@@ -41,12 +39,11 @@ public class FavoriteServiceCargo {
             if (checkingAuthorization.check(selectedFavoritesUser.get().getEmail())) {
                 favoritesCargo.setUserEmail(selectedFavoritesUser.get().getEmail());
                 favoriteRepositoryCargo.save(favoritesCargo);
-            }else{
+            } else {
                 throw new ForbiddenEx("You can't add FavoriteCargo another user");
             }
         } else {
             throw new NotFoundEx("Not found id user/cargo");
-
         }
     }
 
@@ -69,7 +66,7 @@ public class FavoriteServiceCargo {
     }
 
     public List<FavoritesCargo> getAllFavoritesCargo(int userId) {
-        List<FavoritesCargo> ft = favoriteRepositoryCargo.findAllByuserId(userId);
+        List<FavoritesCargo> ft = favoriteRepositoryCargo.findAllByUserId(userId);
         if (!ft.isEmpty()) {
             return ft;
         } else {

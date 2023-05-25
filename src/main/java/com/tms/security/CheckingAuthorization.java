@@ -8,7 +8,4 @@ public class CheckingAuthorization {
     public boolean check(String login) {
         return SecurityContextHolder.getContext().getAuthentication().getName().equals(login);
     }
-
-
-
 }

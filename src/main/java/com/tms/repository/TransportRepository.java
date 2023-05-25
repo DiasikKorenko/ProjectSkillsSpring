@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface TransportRepository extends JpaRepository<Transport,Integer> {
-    List<Transport> findTransportByUserId (Integer id);
+public interface TransportRepository extends JpaRepository<Transport, Integer> {
+    List<Transport> findTransportByUserId(Integer id);
 }
