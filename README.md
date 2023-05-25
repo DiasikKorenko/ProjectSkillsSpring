@@ -3,6 +3,7 @@
 <hr>
 This application is created for organizations that are engaged in cargo transportation.The application is based on the placement and monitoring of available vehicles and the actual cargo to be transported, which facilitates the process of searching for cargo or finding a transport to transport cargo from one point to another.
 By default, application have an admin account with username 'korenko@gmail.com' and password '123'
+
 ## Database
 Application use PostgreSQL database. For start the application you need Postgres server (jdbc:postgresql://localhost:5432/Black_projectSkills) with created database 'Black_projectSkills'. The database contains six tables.
 * Table _users_ - contains information about application users;
